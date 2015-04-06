@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<!--
+
+By John Evans
+www.johnevans.co
+
+Tested in Chrome
+
+-->
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Task Manager</title>
+
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+
+	<link rel="stylesheet" type="text/css" href="css/style.css" />
+
+
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.4.1/backbone.marionette.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone-localstorage.js/1.1.16/backbone.localStorage-min.js"></script>
+
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.2/velocity.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.2/velocity.ui.min.js"></script>
+
+</head>
+<body>
+	<div class="page">
+		<div class="wrapper cf">
+			<div class="page-left">
+				<div class="tabs top-area cf">
+					<ul class="tab-list cf">
+						
+					</ul>
+					<button class="tab create-tab">+</button>
+				</div>
+
+				<div class="tasks">
+					<div class="box-padding">
+						<form class="create-form">
+							<input type="text" class="create-box" placeholder="Create or search" />
+							<input type="submit" class="submit" value="+" disabled>
+							<div class="tasks-message"></div>
+						</form>
+					</div>
+
+					<ul class="task-list scroll-box">
+				</div>
+					
+				</ul>
+			</div>
+
+			<div class="page-right">
+				<div class="top-area">
+					
+				</div>
+
+				<div class="box-padding scroll-box">
+
+					<div class="filters cf">
+						<h3>Filters</h3>
+						<label for="status" class="filter">Status</label>
+						<select id="status" name="status" class="filter-status">
+							<option value="0">All</option>
+							<option value="1">Uncompleted</option>
+							<option value="2">Completed</option>
+						</select>
+
+						<label for="deadline" class="filter">Deadline</label>
+						<select id="deadline" name="deadline" class="filter-deadline">
+							<option value="0">All</option>
+							<option value="1">All future</option>
+							<option value="2">Today only</option>
+							<option value="3">This week only</option>
+							<option value="4">This month only</option>
+							<option value="5">Passed</option>
+							<option value="6">None</option>
+						</select>
+
+						<label for="unfiltered" class="filter">Show unfiltered</label>
+						<input type="checkbox" id="unfiltered" checked />
+					</div>
+
+					<div class="deadline-field">
+						<h3>Deadline</h3>
+						<div class="calendar">
+							Calendar
+						</div>
+					</div>
+
+					<div class="tags-field">
+						<h3>Tags</h3>
+						<div class="tag-list">
+							Tag list
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<div id="templates">
+
+		<script type="text/template" id="task-template">
+
+			<input class="toggle static" type="checkbox" <%= done ? 'checked="checked"' : '' %> />
+			<label class="static text"><%- text %></label>
+			
+			<form action="" class="edit cf">
+				<input class="text edit" type="text" value="<%- text %>" />
+				<button type="submit" class="update" title="Update"><i class="fa fa-floppy-o"></i></button>
+				<button class="delete" title="Delete"><i class="fa fa-trash-o"></i></button>
+			</form>
+
+		</script>
+
+		<script type="text/template" id="tab-template">
+			<label class="static text"><%- text %></label>
+			
+			<form action="" class="edit cf">
+				<input class="text edit" type="text" value="<%- text %>" />
+				<button type="submit" class="update" title="Update"><i class="fa fa-floppy-o"></i></button>
+				<button class="delete" title="Delete"><i class="fa fa-trash-o"></i></button>
+			</form>
+		</script>
+
+	</div>
+
+	<script type="text/javascript" src="js/main.js"></script>
+
+	<noscript>JavaScript needs to be enabled to view the content of this page.</noscript>
+</body>
+</html>

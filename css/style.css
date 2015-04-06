@@ -1,0 +1,604 @@
+/*------------------- Reset -------------------*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+.cf:before,
+.cf:after {
+	content: " ";
+	display: table;
+}
+
+.cf:after {
+	clear: both;
+}
+
+html {
+	box-sizing: border-box;
+}
+*, *:before, *:after {
+	box-sizing: inherit;
+}
+
+/*------------------- Defaults -------------------*/
+
+input[type="submit"], button, .button {
+	display: inline-block;
+	padding: 0.4em 0.6em;
+	border: none;
+	border-radius: 2px;
+	background-color: #A1C160;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 300;
+	color: #fff;
+	cursor: pointer;
+	outline: none;
+	box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1);
+	-webkit-transition: all 250ms;
+	transition: all 250ms;
+}
+
+input[type="submit"]:not([disabled]):hover, button:hover, .button:hover {
+	background-color: #B1D569;
+}
+
+input[type=text], textarea {
+	display: block;
+	width: 100%;
+	border: 1px solid #e7e7e7;
+	border-bottom-width: 3px;
+	padding: 0.2em 0.5em;
+	/* box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1); */
+	font-size: 1.2em;
+	font-family: "Open Sans", sans-serif;
+	font-weight: 300;
+	outline: none;
+	-webkit-transition: all 250ms;
+	transition: all 250ms;
+}
+
+input[type=text]:focus, textarea:focus {
+	border-color: #C1C1C1;
+}
+
+select {
+	border: 1px solid #E7E7E7;
+	color: #909090;
+}
+
+
+a {
+	text-decoration: none;
+	color: inherit;
+	-webkit-transition: all 250ms;
+	transition: all 250ms;
+}
+
+img {
+	max-width: 100%;
+	height: auto;
+	-ms-interpolation-mode: bicubic;
+}
+
+video {
+	display: block;
+	margin: 0 auto;
+}
+
+p, ul {
+	margin-bottom: 1em;
+}
+
+ul {
+	list-style: inherit;
+	padding-left: 1.6em;
+}
+
+li {
+	margin-bottom: 0.15em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	color: #697454;
+	font-weight: 300;
+}
+
+h1 {
+
+}
+
+h2 {
+
+}
+
+h3 {
+	margin-top: 1.4em;
+	margin-bottom: 0.3em;
+	font-size: 1.3em;
+}
+
+h4 {
+
+}
+
+h5 {
+
+}
+
+h6 {
+
+}
+
+.no-select {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+strong, b {
+	font-weight: 700;
+}
+
+/*------------------- Global -------------------*/
+
+noscript {
+	color: #fff;
+	text-align: center;
+}
+
+html, body {
+	overflow: hidden;
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	background-color: #e1e1e1;
+	font-family: 'Open Sans', sans-serif;
+	color: #525252;
+	line-height: 1.4;
+	border-top: 5px solid #a1c160;
+}
+
+/*------------------- Page -------------------*/
+
+.page, .wrapper {
+	height: 100%;
+}
+
+.wrapper {
+	position: relative;
+	width: 95%;
+	max-width: 960px;
+	margin: 0 auto;
+}
+
+.page-left {
+	position: relative;
+	float: left;
+	width: 63%;
+	height: 100%;
+	background-color: #fff;
+}
+
+.page-right {
+	position: relative;
+	float: right;
+	width: 36.7%;
+	height: 100%;
+	background-color: #fff;
+	color: #909090;
+}
+
+.top-area {
+	min-height: 2.2em;
+	background-color: #E1E1E1;
+}
+
+.box-padding {
+	position: relative;
+	z-index: 1;
+	padding: 17px;
+}
+
+.scroll-box {
+	position: absolute;
+	overflow-y: auto;
+	top: 9%;
+	height: 87.4%;
+	width: 100%;
+}
+
+.page-right .scroll-box {
+	top: 3.5%;
+	height: 96.5%;
+}
+
+/*------------------- Tabs -------------------*/
+
+.tabs {
+	color: #B4B4B4;
+	font-weight: 300;
+}
+
+.tabs .tab-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	float: left;
+}
+
+.tabs .tab {
+	display: block;
+	float: left;
+	margin: 0;
+	padding: 0.2em 0.7em;    
+	border: 1px solid #DBDBDB;
+	border-bottom-width: 2px;
+	font-size: 1.1em;
+	background-color: #E9E9E9;
+	box-shadow: none;
+	color: inherit;
+	line-height: inherit;
+	cursor: pointer;
+	-webkit-transition: all 250ms;
+	transition: all 250ms;
+}
+
+.tabs li.tab {
+	
+}
+
+.tabs li.tab.active, .tabs li.tab.active:hover {
+	border-color: #fff;
+	background-color: #fff;
+}
+
+.tabs li.tab:hover {
+	background-color: #F1F1F1;
+}
+
+.tabs button.create-tab {
+	border-radius: 0;
+}
+
+.tabs button.create-tab:hover {
+	border-color: #95B259;
+	background-color: #A1C160;
+	color: #fff;
+}
+
+.tabs .editing .static, .tabs .edit {
+	display: none;
+}
+
+.tabs .editing .edit {
+	display: block;
+}
+
+.tabs .tab .text {
+	padding: 0;
+	font-size: inherit;
+	font-weight: inherit;
+}
+
+.tabs .tab .text.static {
+	cursor: inherit;
+
+}
+
+.tabs .tab .text.edit {
+	border: none;
+	width: 7em;
+	padding: 0 1.6em;
+	background-color: #F7F7F7;
+}
+
+.tabs .tab form {
+	position: relative;
+}
+
+.tabs .tab button {
+	position: absolute;
+	top: 0;
+	height: 100%;
+	border-radius: 0;
+	color: #fff;
+	font-size: 0.7em;
+	-webkit-transition: all 250ms;
+	transition: all 250ms;
+}
+
+.tabs .tab .update {
+	left: 0;
+}
+
+.tabs .tab .delete {
+	right: 0;
+	background-color: #C34B4B;
+}
+
+.tabs .tab .delete:hover {
+	background-color: #000;
+}
+
+
+/*------------------- Create Form -------------------*/
+
+form.create-form {
+	position: relative;
+}
+
+input.create-box {
+	padding-right: 2.4em;
+
+}
+
+.create-form .submit {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 100%;
+	font-size: 1.6em;
+	padding: 0 0.5em;
+	box-shadow: inset 0 -3px 0 rgba(0,0,0,0.1);
+	border-radius: 0;
+	opacity: 1;
+}
+
+.create-form .submit[disabled] {
+	opacity: 0.7;
+	cursor: default;
+}
+
+.tasks-message {
+    position: absolute;
+	
+    top: 100%;
+    margin-top: 0.4em;
+    font-size: 0.95em;
+    color: #B8B8B8;
+    font-weight: 300;
+}
+
+/*------------------- Tasks -------------------*/
+
+.task-list {
+	z-index: 0;
+	margin: 0;
+	padding: 0;
+	margin-top: 6%;
+	list-style: none;
+}
+
+.task-list .task {
+	display: block;
+	position: relative;
+	margin: 0;
+	padding: 9px 12px;
+	border-bottom: 1px solid #DBDBDB;
+	background-color: #fff;
+}
+
+
+.task-list.filtered-list .task {
+	opacity: 0.15 !important;
+	pointer-events: none;
+	box-shadow: 0 -1px 0 #DBDBDB;
+}
+
+.task-list .task.filtered, .task-list .task.ui-sortable-placeholder {
+	opacity: 1 !important;
+	pointer-events: inherit;
+}
+
+.hide-unfiltered .task-list.filtered-list .task {
+	display: none !important;
+}
+
+.hide-unfiltered .task-list .task.filtered, .task-list .task.ui-sortable-placeholder {
+	display: block !important;
+}
+
+
+.task-list .task.ui-sortable-helper {
+	opacity: 1;
+	box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+}
+
+.task-list .task.ui-sortable-placeholder {
+	border: 1px dashed #eee;
+	background-color: #FCFCFC;
+	visibility: visible !important;
+}
+
+.task-list .editing .static, .task-list .edit {
+	display: none;
+}
+
+.task-list .editing .edit {
+	display: block;
+	position: relative;
+}
+
+.task-list .toggle {
+	position: absolute;
+	z-index: 1;
+	width: 1.5em;
+	height: 1.5em;
+	top: 50%;
+	margin-top: -0.75em;
+	cursor: pointer;
+}
+
+.task-list .toggle:after {
+	display: block;
+	position: absolute;
+	content: "\f00c";
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border: 1px solid #DBDBDB;
+	background-color: #fff;
+	font: normal normal normal 14px/1 FontAwesome;
+	color: #fff;
+	text-align: center;
+	font-size: 1.35em;
+}
+
+.task-list .toggle:hover:after {
+	color: #DBDBDB;
+	/*border-color: #A1C160;*/
+}
+
+.task-list .toggle:checked:after, .task-list .toggle:checked:hover:after {
+	color: #A1C160;
+}
+
+.task-list .text {
+	display: block;
+	padding: 3px 0;
+	padding-left: 2em;
+	font-size: 1.1em;
+	color: inherit;
+}
+
+.task-list .text.static {
+	position: relative;
+	z-index: 0;
+}
+
+.task-list li.done .text.static {
+	opacity: 0.3;
+}
+
+.task-list .text.edit {
+	border: none;
+	box-shadow: inset 0 0 0 1px #E7E7E7, inset 0 -2px 0 #E7E7E7;
+	font-weight: 400;
+}
+
+.task-list form.edit {
+	margin-bottom: 1px;
+}
+
+.task-list form button {
+	position: absolute;
+	top: 0;
+	height: 100%;
+	border-radius: 0;
+	font-weight: 400;
+	font-size: 0.9em;
+}
+
+.task-list form .update {
+	left: 0;
+}
+
+.task-list .delete {
+	right: 0;
+	background-color: #C34B4B;
+	color: #fff;
+	-webkit-transition: all 250ms;
+	transition: all 250ms;
+}
+
+.task-list .delete:hover {
+	background-color: #000;
+}
+
+
+/*------------------- Sidebar -------------------*/
+
+.filters {
+
+}
+
+.filters h3 {
+	margin-top: 0;
+}
+
+.filters label {
+	float: left;
+	clear: both;
+	width: 30%;
+	margin-right: 10px;
+	font-size: 0.8em;
+
+}
+
+.filters select {
+	float: left;
+	margin-bottom: 9px;
+}
+
+.filters input[type=checkbox] {
+	float: left;
+}
+
+
+.deadline-field {
+
+}
+
+/*------------------- Calendar -------------------*/
+
+.calendar {
+
+}
+
+
+/*------------------- Tags -------------------*/
+
+.tags-field {
+
+}
+
+.tag-list {
+
+}

@@ -119,7 +119,7 @@ var Tab = Backbone.Model.extend({
 var Tabs = Backbone.Collection.extend({
 
 	model: Tab,
-	localStorage: new Backbone.LocalStorage('tabs-backbone')
+	localStorage: new Backbone.LocalStorage('task-manager-tabs')
 
 });
 
@@ -381,7 +381,7 @@ var Tasks = Backbone.Collection.extend({
 
 	model: Task,
 	comparator: 'order',
-	localStorage: new Backbone.LocalStorage('tasks-backbone'),
+	localStorage: new Backbone.LocalStorage('task-manager-tasks'),
 
 	deleteModels: function(attr) {
 		var models = this.where(attr);
@@ -755,3 +755,36 @@ var TasksView = Backbone.View.extend({
 });
 
 var tasksView = new TasksView();
+
+
+
+
+
+/*------------------- Data Backup -------------------*/
+
+var backup = {
+
+	data: {
+		tabs: null,
+		tasks: null
+	},
+
+	save: function() {
+		this.data.tabs = new Backbone.Collection(tabs.toJSON());
+		this.data.tasks = new Backbone.Collection(tasks.toJSON());
+	},
+
+	load: function() {
+		//Clears the local storage
+		tabs.localStorage._clear();
+		tasks.localStorage._clear();
+
+		//Resets the collections with the previous data
+		tabs.reset(this.data.tabs.toJSON());
+		tasks.reset(this.data.tasks.toJSON());
+
+		//Forces a write to local storage
+		tabs.invoke('save');
+		tasks.invoke('save');
+	}
+};

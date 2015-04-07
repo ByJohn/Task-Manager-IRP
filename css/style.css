@@ -249,7 +249,7 @@ body {
 	position: absolute;
 	overflow-y: auto;
 	top: 9%;
-	height: 87.4%;
+	height: 87%;
 	width: 100%;
 }
 
@@ -396,13 +396,21 @@ input.create-box {
 }
 
 .tasks-message {
-    position: absolute;
-	
-    top: 100%;
-    margin-top: 0.4em;
-    font-size: 0.95em;
-    color: #B8B8B8;
-    font-weight: 300;
+	position: absolute;
+	top: 100%;
+	width: 100%;
+	margin-top: 0.4em;
+	font-size: 0.95em;
+	color: #B8B8B8;
+	font-weight: 300;
+	background: rgb(255,255,255);
+	background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,0)));
+	background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
+	background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
+	background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
+	background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff',GradientType=0 );
 }
 
 /*------------------- Tasks -------------------*/
@@ -411,42 +419,51 @@ input.create-box {
 	z-index: 0;
 	margin: 0;
 	padding: 0;
-	margin-top: 6%;
+	margin-top: 7%;
 	list-style: none;
 }
 
 .task-list .task {
 	display: block;
 	position: relative;
+	overflow: hidden;
 	margin: 0;
 	padding: 9px 12px;
 	border-bottom: 1px solid #DBDBDB;
 	background-color: #fff;
+	-webkit-transition: opacity 250ms;
+	transition: opacity 250ms;
 }
 
 
 .task-list.filtered-list .task {
 	opacity: 0.15 !important;
-	pointer-events: none;
+	/*pointer-events: none;*/
 	box-shadow: 0 -1px 0 #DBDBDB;
 }
 
 .task-list .task.filtered, .task-list .task.ui-sortable-placeholder {
 	opacity: 1 !important;
-	pointer-events: inherit;
+	/*pointer-events: inherit;*/
 }
 
 .hide-unfiltered .task-list.filtered-list .task {
-	display: none !important;
+	height: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+	border: none;
+	box-shadow: none;
 }
 
 .hide-unfiltered .task-list .task.filtered, .task-list .task.ui-sortable-placeholder {
-	display: block !important;
+	height: auto;
+	padding: 9px 12px;
+	border-bottom: 1px solid #DBDBDB;
 }
 
 
 .task-list .task.ui-sortable-helper {
-	opacity: 1;
+	opacity: 1 !important;
 	box-shadow: 0 2px 20px rgba(0,0,0,0.05);
 }
 

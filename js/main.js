@@ -167,7 +167,7 @@ var TabView = Backbone.View.extend({
 	},
 
 	updateTab: function(e) {
-		e.preventDefault()
+		e.preventDefault();
 
 		var value = this.input.val();
 		if (!value) {
@@ -185,13 +185,16 @@ var TabView = Backbone.View.extend({
 		}
 	},
 
-	clear: function() {
+	clear: function(e) {
+		e.preventDefault();
+
 		if(this.model.collection.length > 1) {
+			backup.createUndo('Tab and its tasks deleted');
 			tasks.deleteModels( { 'tab': this.model.get('id') } );
 			this.model.destroy();
 		}
 		else {
-			alert('You cannot delete your last tab');
+			toast.show('You cannot delete your last tab');
 		}
 	},
 
@@ -459,7 +462,7 @@ var TaskView = Backbone.View.extend({
 	},
 
 	updateTask: function(e) {
-		e.preventDefault()
+		e.preventDefault();
 
 		var value = this.input.val();
 		if (!value) {
@@ -479,6 +482,7 @@ var TaskView = Backbone.View.extend({
 	},
 
 	clear: function() {
+		backup.createUndo('Task deleted');
 		var that = this;
 		this.$el.velocity("slideUp", { duration: globals.slideSpeed, complete: function() {
 			that.model.destroy();
@@ -768,24 +772,105 @@ var backup = {
 		tasks: null
 	},
 
+	createUndo: function(message) {
+		this.save();
+		toast.show(message + '. <a href="javascript:void(0)" onclick="backup.load();">Undo <i class="fa fa-undo"></i></a>', 5000);
+	},
+
 	save: function() {
 		this.data.tabs = new Backbone.Collection(tabs.toJSON());
 		this.data.tasks = new Backbone.Collection(tasks.toJSON());
 	},
 
 	load: function() {
-		//Clears the local storage
-		tabs.localStorage._clear();
-		tasks.localStorage._clear();
+		if(this.data.tabs !== null && this.data.tasks !== null) {
+			//Clears the local storage
+			tabs.localStorage._clear();
+			tasks.localStorage._clear();
 
-		//Resets the collections with the previous data
-		tabs.reset(this.data.tabs.toJSON());
-		tasks.reset(this.data.tasks.toJSON());
+			//Resets the collections with the previous data
+			tabs.reset(this.data.tabs.toJSON());
+			tasks.reset(this.data.tasks.toJSON());
 
-		//Forces a write to local storage
-		tabs.invoke('save');
-		tasks.invoke('save');
+			//Forces a write to local storage
+			tabs.invoke('save');
+			tasks.invoke('save');
 
-		tabsView.setActiveTab(tabsView.activeTab);
+			tabsView.setActiveTab(tabsView.activeTab);
+		}
+		else {
+			console.log('Backup data is null: ', this.data);
+		}
 	}
 };
+
+
+
+
+
+
+
+/*------------------- Toast View -------------------*/
+
+var ToastView = Backbone.View.extend({
+
+	el: $(".toast"),
+
+	events: {
+		'mouseenter .toast-box' : 'hovered',
+		'mouseleave .toast-box' : 'unhovered',
+		'click .toast-box' : 'hide',
+	},
+
+	initialize: function() {
+		this.box = this.$el.find('.toast-box');
+		this.hide();
+	},
+
+	clearHideTimer: function() {
+		if(typeof this.hideTimer == "number") {
+			clearTimeout(this.hideTimer);
+			delete this.hideTimer;
+		}
+	},
+
+	show: function(html, timeout) {
+		timeout = typeof timeout !== 'undefined' ? timeout : 3000;
+
+		this.hide();
+
+		this.box.html(html);
+
+		this.box.css({'top': -this.box.outerHeight()}).show().animate({'top': '0'}, globals.slideSpeed);
+
+		var that = this;
+		this.hideTimer = setTimeout(function() {
+			that.fadeOut();
+		}, timeout);
+	},
+
+	fadeOut: function() {
+		var that = this;
+		this.box.animate({'opacity': '0'}, 1000, function() {
+			that.hide();
+		});
+	},
+
+	hide: function() {
+		this.clearHideTimer();
+		this.box.stop(true).css({'top': '-100%', 'display': 'none', 'opacity': 1});
+
+		this.box.html('');
+	},
+
+	hovered: function(e) {
+		this.clearHideTimer();
+		this.box.stop(true).css({'top': '0', 'display': 'block', 'opacity': 1});
+	},
+
+	unhovered: function(e) {
+		this.fadeOut();
+	}
+});
+
+var toast = new ToastView();

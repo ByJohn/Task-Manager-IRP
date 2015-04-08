@@ -573,6 +573,53 @@ input.create-box {
 
 /*------------------- Sidebar -------------------*/
 
+/*------------------- Toast -------------------*/
+
+.toast {
+	position: relative;
+
+}
+
+.toast .toast-box {
+	position: absolute;
+
+	top: 0;
+	right: 0;
+	padding: 4px 9px;
+	font-size: 0.95em;
+	max-width: 90%;
+	background-color: #F4F4F4;
+}
+
+.toast .toast-box i {
+	/* font-size: 0.7em; */
+	vertical-align: middle;
+}
+
+.toast .toast-box a {
+    color: #7EA136;
+
+}
+
+.toast .toast-box a:hover {
+    text-decoration: underline;
+
+}
+
+.toast .toast-box a i {
+    font-size: 0.7em;
+	-webkit-transition: all 250ms;
+	transition: all 250ms;
+}
+
+.toast .toast-box a:hover i {
+	-webkit-transform: rotate(-180deg);
+	transform: rotate(-180deg);
+}
+
+
+/*------------------- Filters -------------------*/
+
 .filters {
 
 }

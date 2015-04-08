@@ -197,7 +197,7 @@ var TabView = Backbone.View.extend({
 
 	changeTab: function() {
 		if(tabsView.activeTab !== this.model.get('id')) {
-			this.$el.parent().trigger('changeTab', this.model);
+			this.$el.parent().trigger('changeTab', this.model.get('id'));
 		}
 	}
 
@@ -257,8 +257,8 @@ var TabsView = Backbone.View.extend({
 		tabs.each(this.addOneAfter, this);
 	},
 
-	changeTab: function(e, tabModel) {
-		this.setActiveTab(tabModel);
+	changeTab: function(e, tabID) {
+		this.setActiveTab(tabID);
 	},
 
 	tabDestroyed: function(tabModel) {
@@ -266,18 +266,17 @@ var TabsView = Backbone.View.extend({
 	},
 
 	setToDefaultTab: function() {
-		this.setActiveTab(tabs.first());
+		this.setActiveTab(tabs.first().get('id'));
 	},
 
-	setActiveTab: function(tabModel) {
-		var id = tabModel.get('id');
-		this.activeTab = id;
-		this.$activeTab = this.list.find('.tab[data-id=' + id + ']');
+	setActiveTab: function(tabID) {
+		this.activeTab = tabID;
+		this.$activeTab = this.list.find('.tab[data-id=' + tabID + ']');
 
 		this.list.find('.tab').removeClass('active');
 		this.$activeTab.addClass('active');
 
-		this.$el.trigger('tabChanged', id);
+		this.$el.trigger('tabChanged', tabID);
 	}
 });
 var tabsView = new TabsView();
@@ -786,5 +785,7 @@ var backup = {
 		//Forces a write to local storage
 		tabs.invoke('save');
 		tasks.invoke('save');
+
+		tabsView.setActiveTab(tabsView.activeTab);
 	}
 };

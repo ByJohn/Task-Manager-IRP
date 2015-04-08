@@ -236,6 +236,7 @@ body {
 
 .top-area {
 	min-height: 2.2em;
+	overflow: hidden;
 	background-color: #E1E1E1;
 }
 

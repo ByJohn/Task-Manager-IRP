@@ -411,6 +411,7 @@ var TaskView = Backbone.View.extend({
 		'click .toggle' : 'toggleDone',
 		'dblclick label.text' : 'edit',
 		'keydown input.text': 'textKeyDown',
+		'blur input.text': 'textboxBlured',
 		'submit form.edit' : 'updateTask',
 		'click .delete' : 'clear',
 
@@ -462,7 +463,7 @@ var TaskView = Backbone.View.extend({
 	},
 
 	updateTask: function(e) {
-		e.preventDefault();
+		if(typeof e !== 'undefined') e.preventDefault();
 
 		var value = this.input.val();
 		if (!value) {
@@ -479,6 +480,10 @@ var TaskView = Backbone.View.extend({
 			// Also reset the hidden input back to the original value.
 			this.input.val(this.model.get('text'));
 		}
+	},
+
+	textboxBlured: function () {
+		//this.updateTask(); //Fires before delete button is clicked. Unless you change the "click" event to a "mousedown" event
 	},
 
 	clear: function() {
@@ -758,6 +763,42 @@ var TasksView = Backbone.View.extend({
 });
 
 var tasksView = new TasksView();
+
+
+
+
+
+
+
+
+/*------------------- Calendar View -------------------*/
+
+var CalendarView = Backbone.View.extend({
+
+	el: $(".calendar"),
+
+	events: {
+		
+	},
+
+	initialize: function() {
+		this.$el.fullCalendar({
+			contentHeight: 'auto',
+			fixedWeekCount: false,
+			firstDay: 1,
+			// dayNamesShort: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+			dayRender: function(date, cell) {
+				var $c = $(cell);
+				$c.html('<div class="drag-event" data-date="' + date.format() + '" title="' + date.format('MMMM Do YYYY') + '"><div class="num">' + date.format('D') + '</div></div>');
+			}
+		});
+	}
+
+});
+
+var calendar = new CalendarView();
+
+
 
 
 

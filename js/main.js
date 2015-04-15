@@ -139,8 +139,9 @@ var TabView = Backbone.View.extend({
 		'click ' : 'changeTab',
 		'dblclick label.text' : 'edit',
 		'keydown input.text': 'textKeyDown',
+		'blur input.text': 'textboxBlured',
 		'submit form.edit' : 'updateTab',
-		'click .delete' : 'clear'
+		'mousedown .delete' : 'clear'
 	},
 
 	initialize: function() {
@@ -167,7 +168,7 @@ var TabView = Backbone.View.extend({
 	},
 
 	updateTab: function(e) {
-		e.preventDefault();
+		if(typeof e !== 'undefined') e.preventDefault();
 
 		var value = this.input.val();
 		if (!value) {
@@ -183,6 +184,10 @@ var TabView = Backbone.View.extend({
 			this.$el.removeClass('editing');
 			this.input.val(this.model.get('text')); // Also reset the hidden input back to the original value.
 		}
+	},
+
+	textboxBlured: function () {
+		this.updateTab();
 	},
 
 	clear: function(e) {
@@ -403,7 +408,7 @@ var tasks = new Tasks();
 var TaskView = Backbone.View.extend({
 
 	tagName:  "li",
-	className: 'task cf no-select',
+	className: 'task attributes-dropzone cf no-select',
 
 	template: _.template($('#task-template').html()),
 
@@ -413,10 +418,14 @@ var TaskView = Backbone.View.extend({
 		'keydown input.text': 'textKeyDown',
 		'blur input.text': 'textboxBlured',
 		'submit form.edit' : 'updateTask',
-		'click .delete' : 'clear',
+		'mousedown .delete' : 'clear',
 
 		'drop' : 'drop',
-		'updateOrderValue' : 'updateOrderValue'
+		'updateOrderValue' : 'updateOrderValue',
+
+		'draggableDropped' : 'draggableDropped',
+		'draggableEnter' : 'draggableEnter',
+		'draggableLeave' : 'draggableLeave'
 	},
 
 	initialize: function() {
@@ -483,7 +492,7 @@ var TaskView = Backbone.View.extend({
 	},
 
 	textboxBlured: function () {
-		//this.updateTask(); //Fires before delete button is clicked. Unless you change the "click" event to a "mousedown" event
+		this.updateTask();
 	},
 
 	clear: function() {
@@ -505,6 +514,26 @@ var TaskView = Backbone.View.extend({
 
 	updateOrderValue: function(e, index) {
 		if(this.model.get('order') != index) this.model.save('order', index);
+	},
+
+	
+	//Temporarily store the data from the last draggable object to hover over this task. The temp data cleared when the draggable object leaves
+	draggableEnter: function(e, dragEvent) {
+		var $drag = $(dragEvent.relatedTarget);
+		this.tempDropData = {
+			type: $drag.attr('data-drop-type'),
+			value: $drag.attr('data-drop-value')
+		};
+	},
+
+	draggableLeave: function(e, dragEvent) {
+		delete this.tempDropData;
+	},
+
+	draggableDropped: function(e, dragEvent) {
+		if(typeof this.tempDropData !== 'undefined') {
+			console.log('drop', this.el, this.tempDropData);
+		}
 	}
 
 });
@@ -782,6 +811,8 @@ var CalendarView = Backbone.View.extend({
 	},
 
 	initialize: function() {
+		var template = _.template($('#date-template').html());
+
 		this.$el.fullCalendar({
 			contentHeight: 'auto',
 			fixedWeekCount: false,
@@ -789,14 +820,114 @@ var CalendarView = Backbone.View.extend({
 			// dayNamesShort: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
 			dayRender: function(date, cell) {
 				var $c = $(cell);
-				$c.html('<div class="drag-event" data-date="' + date.format() + '" title="' + date.format('MMMM Do YYYY') + '"><div class="num">' + date.format('D') + '</div></div>');
+				var templateData = {
+					dateFormat: date.format(),
+					fullDate: date.format('Do MMMM YYYY'),
+					day: date.format('D')
+				};
+				$c.html(template(templateData));
+			}
+		});
+	},
+
+	render: function() {
+	}
+
+});
+
+var calendar = new CalendarView();
+
+
+
+
+
+/*------------------- Drag and Drop View -------------------*/
+
+var DragAndDropView = Backbone.View.extend({
+
+	events: {
+		
+	},
+
+	initialize: function() {
+		interact('.draggable').draggable({
+			inertia: true,
+			restrict: {
+				restriction: 'parent',
+				endOnly: true,
+				elementRect: { left: 0, right: 1, top: 0, bottom: 1 }
+			},
+
+			onstart: function(event) {
+				$(event.target).addClass('dragging');
+			},
+
+			onmove: function (event) {
+				var target = event.target,
+				x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+				y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+				target.style.webkitTransform =
+				target.style.transform =
+				'translate(' + x + 'px, ' + y + 'px)';
+
+				target.setAttribute('data-x', x);
+				target.setAttribute('data-y', y);
+			},
+
+			onend: function (event) {
+				var target = event.target,
+					$target = $(target);
+
+				$target.removeClass('dragging');
+			},
+
+			oninertiastart: function(event) {
+				$('.task-list .task').trigger('draggableDropped', event);
+			}
+		});
+
+		interact('.attributes-dropzone').dropzone({
+			accept: '.draggable',
+			overlap: 0.75,
+
+			ondropactivate: function (event) {
+				event.target.classList.add('drop-active');
+			},
+
+			ondropdeactivate: function (event) {
+				event.target.classList.remove('drop-active');
+				event.target.classList.remove('drop-target');
+			},
+
+			ondragenter: function (event) {
+				var draggableElement = event.relatedTarget,
+				dropzoneElement = event.target;
+
+				dropzoneElement.classList.add('drop-target');
+				draggableElement.classList.add('can-drop');
+
+				$(event.target).trigger('draggableEnter', event);
+			},
+
+			ondragleave: function (event) {
+				event.target.classList.remove('drop-target');
+				event.relatedTarget.classList.remove('can-drop');
+
+				$(event.target).trigger('draggableLeave', event);
+			},
+
+			//Does not fire when dragging inertia is enabled
+			ondrop: function (event) {
+				console.log('ondrop', event);
 			}
 		});
 	}
 
 });
 
-var calendar = new CalendarView();
+var dragDrop = new DragAndDropView();
+
 
 
 

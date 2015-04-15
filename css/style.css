@@ -213,7 +213,7 @@ body {
 .wrapper {
 	position: relative;
 	width: 95%;
-	max-width: 960px;
+	max-width: 1200px;
 	margin: 0 auto;
 }
 
@@ -250,6 +250,7 @@ body {
 	position: absolute;
 	overflow-y: auto;
 	top: 9%;
+	top: calc(9% + -5px);
 	height: 87%;
 	width: 100%;
 }
@@ -257,6 +258,7 @@ body {
 .page-right .scroll-box {
 	top: 3.5%;
 	height: 96.5%;
+	overflow: visible;
 }
 
 /*------------------- Tabs -------------------*/
@@ -573,6 +575,13 @@ input.create-box {
 
 /*------------------- Sidebar -------------------*/
 
+.info {
+	opacity: 0.6;
+	margin-top: 1.1em;
+	font-size: 0.8em
+}
+
+
 /*------------------- Toast -------------------*/
 
 .toast {
@@ -582,7 +591,6 @@ input.create-box {
 
 .toast .toast-box {
 	position: absolute;
-
 	top: 0;
 	right: 0;
 	padding: 4px 9px;
@@ -651,6 +659,17 @@ input.create-box {
 
 }
 
+/*------------------- Draggable -------------------*/
+
+.draggable {
+	cursor: move;
+}
+
+.draggable.dragging {
+	z-index: 100;
+	opacity: 1 !important;
+}
+
 /*------------------- Calendar -------------------*/
 
 .calendar {
@@ -695,6 +714,11 @@ input.create-box {
 	color: #C3C3C3;
 }
 
+.fc-row .fc-bg,
+.fc-day-grid .fc-row {
+	z-index: inherit;
+}
+
 .fc td, .fc th {
 	border: none;
 }
@@ -709,25 +733,33 @@ input.create-box {
 	background: none;
 }
 
-td.fc-other-month {
-	opacity: 0.5;
-}
-
-.drag-event {
+.fc .draggable-container {
 	position: relative;
 	width: 2.5em;
 	height: 2.5em;
 	margin: 0.75em auto 0;
-	border-radius: 50%;
+	text-align: center;
+	font-size: 0.8em;
+}
+
+.drag-event {
+	position: absolute;
+	min-width: 100%;
+	min-height: 100%;
+	border-radius: 101px;
 	background-color: #FFFFFF;
 	border: 1px solid #D0D0D0;
 	text-align: center;
-	font-size: 0.8em;
-	cursor: move;
+	-webkit-transition: border-radius 250ms;
+	transition: border-radius 250ms;
 }
 
 td.fc-today .drag-event {
-    background-color: #EAEAEA;
+	background-color: #EAEAEA;
+}
+
+td.fc-other-month .drag-event {
+	opacity: 0.5;
 }
 
 .drag-event:hover, td.fc-today .drag-event:hover {
@@ -736,9 +768,79 @@ td.fc-today .drag-event {
 	color: #fff;
 }
 
-.drag-event .num {
-    padding-top: 0.5em;
+.drag-event.dragging {
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+	background-color: #A1C160;
+	border-color: #A1C160;
+	color: #fff;
+}
 
+.drag-event .num-container {
+	padding-top: 0.5em;
+}
+
+.drag-event .date {
+
+}
+
+.drag-event.dragging .date {
+	display: none;
+}
+
+.drag-event .drop-icon {
+	display: none;
+}
+
+.drag-event.dragging .drop-icon {
+	display: block;
+}
+
+.drag-event .full-date {
+	position: absolute;
+	pointer-events: none;
+	z-index: -1;
+	opacity: 0;
+	bottom: 0;
+	left: 50%;
+	font-size: 0.8em;
+	padding: 0.2em 0.5em;
+	background-color: #A1C160;
+	color: #FFFFFF;
+	border-radius: 50px;
+	white-space: nowrap;
+	-webkit-transition: all 250ms;
+	transition: all 250ms;
+	-webkit-transform: translateX(-50%);
+	transform: translateX(-50%);
+}
+
+.drag-event.dragging .full-date {
+	opacity: 1;
+	bottom: 100%;
+}
+
+.drag-event .triangle {
+	display: none;
+	position: absolute;
+	pointer-events: none;
+	bottom: -1px;
+	left: 50%;
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 0 1.25em 0 1.25em;
+	border-color: transparent white transparent white;
+	-webkit-transform: translateX(-50%);
+	transform: translateX(-50%);
+	z-index: -1;
+	-webkit-transition: all 250ms;
+	transition: all 250ms;
+}
+
+.drag-event.dragging .triangle {
+	border-top-width: 1em;
+	border-top-color: #A1C160;
 }
 
 

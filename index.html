@@ -98,6 +98,9 @@ Tested in Chrome
 					<div class="deadline-field">
 						<h3>Deadline</h3>
 						<div class="calendar"></div>
+						<div class="info">
+							<i class="fa fa-reply"></i> Drag and drop a date onto a task to create a deadline
+						</div>
 					</div>
 
 					<div class="tags-field">
@@ -126,6 +129,8 @@ Tested in Chrome
 				<button class="delete" title="Delete"><i class="fa fa-trash-o"></i></button>
 			</form>
 
+			<div class="drop-tip"></div>
+
 		</script>
 
 		<script type="text/template" id="tab-template">
@@ -136,6 +141,19 @@ Tested in Chrome
 				<button type="submit" class="update" title="Update"><i class="fa fa-floppy-o"></i></button>
 				<button class="delete" title="Delete"><i class="fa fa-trash-o"></i></button>
 			</form>
+		</script>
+
+		<script type="text/template" id="date-template">
+			<div class="draggable-container">
+				<div class="drag-event draggable" data-drop-type="date" data-drop-value="<%- dateFormat %>" title="<%- fullDate %>">
+					<div class="num-container">
+						<div class="date"><%- day %></div>
+						<div class="drop-icon"><i class="fa fa-plus-circle"></i></div>
+						<div class="full-date"><%- fullDate %></div>
+					</div>
+					<div class="triangle"></div>
+				</div>
+			</div>
 		</script>
 
 	</div>

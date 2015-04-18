@@ -48,6 +48,47 @@ function formatTime(timestamp) {
 	return d.getHours() + ':' + d.getMinutes();
 }
 
+//Date formatted as "YYYY-MM-DD". Returns object with time values
+function getTimeUntilDate(date) {
+	var today = moment().startOf('day'); //The start of the day today
+	var future = moment(date);
+	var duration = moment.duration(future.diff(today));
+
+	var data = duration._data;
+	data.wholeMilliseconds = duration._milliseconds;
+
+	return data;
+}
+
+//Date formatted as "YYYY-MM-DD".
+function getFormattedDeadline(date) {
+	var dateData = getTimeUntilDate(date);
+	var text = '';
+
+	if(dateData.wholeMilliseconds >= 0) {
+		text += 'is ';
+		if(dateData.years > 0) text += 'in ' + dateData.years + ' year' + addSPlural(dateData.years);
+		else if(dateData.months > 0) text += 'in ' + dateData.months + ' month' + addSPlural(dateData.months);
+		else if(dateData.days > 1) text += 'in ' + dateData.days + ' day' + addSPlural(dateData.days);
+		else if(dateData.days == 1) text += 'tomorrow';
+		else if(dateData.days == 0 && dateData.wholeMilliseconds == 0) text += 'today';
+	}
+	else if(dateData.wholeMilliseconds < 0) {
+		text += 'was ';
+		if(dateData.years < 0) text += (dateData.years * -1) + ' year' + addSPlural((dateData.years * -1)) + ' ago';
+		else if(dateData.months < 0) text += (dateData.months * -1) + ' month' + addSPlural((dateData.months * -1)) + ' ago';
+		else if(dateData.days < -1) text += (dateData.days * -1) + ' day' + addSPlural((dateData.days * -1)) + ' ago';
+		else if(dateData.days == -1) text += 'yesterday';
+	}
+
+	return text;
+}
+
+function addSPlural(num) {
+	if(num < 1 || num > 1) return 's';
+	return '';
+}
+
 function addLeadingZero(num) {
 	return ('0' + num.toString()).slice(-2);
 }
@@ -78,6 +119,11 @@ function animateTypingTextContent($element) {
 	    if (isTag) return type();
 	    setTimeout(type, 20);
 	}());
+}
+
+//Based on http://stackoverflow.com/a/23202637/528423
+function map(value, in_min , in_max , out_min , out_max ) {
+	return ( value - in_min ) * ( out_max - out_min ) / ( in_max - in_min ) + out_min;
 }
 
 
@@ -360,6 +406,7 @@ var Task = Backbone.Model.extend({
 		return {
 			'text': 'New todo',
 			'tab': tabsView.activeTab,
+			'deadline': '',
 			'created_time': Math.round(new Date().getTime() / 1000),
 			'completed_time': -1,
 			'order': 0
@@ -420,6 +467,8 @@ var TaskView = Backbone.View.extend({
 		'submit form.edit' : 'updateTask',
 		'mousedown .delete' : 'clear',
 
+		'click .remove-deadline' : 'removeDeadline',
+
 		'drop' : 'drop',
 		'updateOrderValue' : 'updateOrderValue',
 
@@ -450,6 +499,22 @@ var TaskView = Backbone.View.extend({
 		templateData.timeText = 'Created on ' + templateData.createdDate;
 		templateData.timeTitle = templateData.createdDate + ' - ' + templateData.createdTime;
 
+		if(this.model.get('deadline') != '') {
+			templateData.deadlineData = {
+				value: this.model.get('deadline'),
+				fullDate: moment(this.model.get('deadline')).format('Do MMMM YYYY'),
+				fullDate2: moment(this.model.get('deadline')).format('Do MMM YYYY'),
+				till: 'Deadline ' + getFormattedDeadline(this.model.get('deadline'))
+			};
+			var duration = getTimeUntilDate(this.model.get('deadline'));
+			var dayLimit = 14;
+			var days = duration.days;
+			if(days < 0) days = 0;
+			if(days > dayLimit) days = dayLimit;
+
+			templateData.deadlineData.barWidth = 100 - map(days, 0, dayLimit, 0, 100);
+		}
+
 		if(this.model.get('completed_time') > -1) {
 			templateData.timeText = 'Completed on ' + formatDate(this.model.get('completed_time'));
 			templateData.timeTitle = formatDate(this.model.get('completed_time')) + ' - ' + formatTime(this.model.get('completed_time'));
@@ -458,6 +523,7 @@ var TaskView = Backbone.View.extend({
 		this.$el.html(this.template(templateData));
 
 		this.input = this.$('input.text');
+		this.$dropTipText = this.$('.drop-tip-text');
 
 		return this;
 	},
@@ -481,6 +547,11 @@ var TaskView = Backbone.View.extend({
 			this.model.save({text: value});
 			this.$el.removeClass("editing");
 		}
+	},
+
+	removeDeadline: function() {
+		backup.createUndo('Deadline removed');
+		this.model.save({deadline: ''});
 	},
 
 	textKeyDown: function(e) {
@@ -524,15 +595,24 @@ var TaskView = Backbone.View.extend({
 			type: $drag.attr('data-drop-type'),
 			value: $drag.attr('data-drop-value')
 		};
+
+		var dropTipTextHTML = '';
+		if(this.tempDropData.type === 'date') dropTipTextHTML = '+ <i class="fa fa-calendar"></i> &nbsp; Set dealine for ' + moment(this.tempDropData.value).format('Do MMMM YYYY');
+
+		this.$dropTipText.html(dropTipTextHTML);
 	},
 
 	draggableLeave: function(e, dragEvent) {
 		delete this.tempDropData;
+		this.$dropTipText.html('');
 	},
 
 	draggableDropped: function(e, dragEvent) {
 		if(typeof this.tempDropData !== 'undefined') {
-			console.log('drop', this.el, this.tempDropData);
+			if(this.tempDropData.type === 'date') this.model.save({deadline: this.tempDropData.value});
+			else if(this.tempDropData.type === 'tag') this.model.save({tags: this.model.get('tags').push(this.tempDropData.value)});
+			
+			delete this.tempDropData;
 		}
 	}
 
@@ -695,7 +775,6 @@ var TasksView = Backbone.View.extend({
 
 		var foundTasks = this.getAll();
 
-		// console.log('add all in', tabsView.activeTab, foundTasks);
 		if(foundTasks.length > 0) {
 			_.each(foundTasks, this.addOneAfter, this);
 
@@ -889,7 +968,7 @@ var DragAndDropView = Backbone.View.extend({
 
 		interact('.attributes-dropzone').dropzone({
 			accept: '.draggable',
-			overlap: 0.75,
+			overlap: 0.5,
 
 			ondropactivate: function (event) {
 				event.target.classList.add('drop-active');
@@ -919,7 +998,6 @@ var DragAndDropView = Backbone.View.extend({
 
 			//Does not fire when dragging inertia is enabled
 			ondrop: function (event) {
-				console.log('ondrop', event);
 			}
 		});
 	}
@@ -971,7 +1049,7 @@ var backup = {
 			tabsView.setActiveTab(tabsView.activeTab);
 		}
 		else {
-			console.log('Backup data is null: ', this.data);
+			console.debug('Backup data is null: ', this.data);
 		}
 	}
 };

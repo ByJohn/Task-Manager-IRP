@@ -72,7 +72,7 @@ Tested in Chrome
 				<div class="box-padding scroll-box">
 
 					<div class="filters cf">
-						<h3>Filters</h3>
+						<h3><i class="fa fa-filter"></i> Filters</h3>
 						<label for="status" class="filter">Status</label>
 						<select id="status" name="status" class="filter-status">
 							<option value="0">All</option>
@@ -96,7 +96,7 @@ Tested in Chrome
 					</div>
 
 					<div class="deadline-field">
-						<h3>Deadline</h3>
+						<h3><i class="fa fa-calendar"></i> Deadline</h3>
 						<div class="calendar"></div>
 						<div class="info">
 							<i class="fa fa-reply"></i> Drag and drop a date onto a task to create a deadline
@@ -104,7 +104,7 @@ Tested in Chrome
 					</div>
 
 					<div class="tags-field">
-						<h3>Tags</h3>
+						<h3><i class="fa fa-tag"></i> Tags</h3>
 						<div class="tag-list">
 							Tag list
 						</div>
@@ -122,6 +122,25 @@ Tested in Chrome
 
 			<input class="toggle static" type="checkbox" <%= done ? 'checked="checked"' : '' %> />
 			<label class="static text"><%- text %></label>
+
+			<% if (typeof(deadlineData) != 'undefined') { %>
+				<div class="deadline static">
+					<div class="reveal-box">
+						<div class="health-bar">
+							<div class="bar" style="width: <%- deadlineData.barWidth %>%;"></div>
+						</div>
+						<div class="deadline-text">
+							<div class="till">
+								<i class="fa fa-calendar"></i> <%- deadlineData.till %>
+								<span class="full-date">
+									<%- deadlineData.fullDate2 %>
+								</span>
+							</div>
+							<button class="remove-deadline"><i class="fa fa-times"></i> Remove deadline</button>
+						</div>
+					</div>
+				</div>
+			<% } %>
 			
 			<form action="" class="edit cf">
 				<input class="text edit" type="text" value="<%- text %>" />
@@ -129,7 +148,7 @@ Tested in Chrome
 				<button class="delete" title="Delete"><i class="fa fa-trash-o"></i></button>
 			</form>
 
-			<div class="drop-tip"></div>
+			<div class="drop-tip"><div class="drop-tip-text"></div></div>
 
 		</script>
 

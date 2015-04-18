@@ -429,13 +429,17 @@ input.create-box {
 .task-list .task {
 	display: block;
 	position: relative;
-	overflow: hidden;
+	/* overflow: hidden; */
 	margin: 0;
 	padding: 9px 12px;
 	border-bottom: 1px solid #DBDBDB;
 	background-color: #fff;
 	-webkit-transition: opacity 250ms;
 	transition: opacity 250ms;
+}
+
+.task-list .task:first-child {
+	border-top: 1px solid #DBDBDB;
 }
 
 
@@ -456,6 +460,7 @@ input.create-box {
 	padding-bottom: 0;
 	border: none;
 	box-shadow: none;
+	overflow: hidden;
 }
 
 .hide-unfiltered .task-list .task.filtered, .task-list .task.ui-sortable-placeholder {
@@ -573,6 +578,137 @@ input.create-box {
 }
 
 
+.task-list .deadline {
+	position: absolute;
+	top: -6px;
+	right: 0;
+	min-width: 40%;
+	height: 22px;
+	padding-top: 6px;
+}
+
+.task-list .done .deadline {
+	opacity: 0.3;
+}
+
+.task-list .deadline:hover, .task-list .done .deadline:hover {
+	height: 100%;
+	opacity: 1;
+}
+
+.task-list .deadline .reveal-box {
+	position: relative;
+	overflow: hidden;
+	max-height: 5px;
+	padding: 0;
+	text-align: left;
+	color: #fff;
+	font-weight: 300;
+	font-size: 0.8em;
+	-webkit-transition: all 250ms;
+	transition: all 250ms;
+}
+
+.task-list .deadline:hover .reveal-box {
+	max-height: 100%;
+	padding: 0.3em 0.6em;
+	box-shadow: 0 2px 0 rgba(0,0,0,0.1);
+}
+
+.task-list .deadline .health-bar {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #A1C160;
+}
+
+.task-list .deadline .health-bar .bar {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 100%;
+	background-color: #C34B4B;
+	-webkit-transition: all 250ms;
+	transition: all 250ms;
+}
+
+.task-list .done .deadline .health-bar .bar {
+	background-color: #A1C160;
+}
+
+.task-list .deadline .deadline-text {
+	position: relative;
+	opacity: 0;
+	-webkit-transition: all 250ms;
+	transition: all 250ms;
+}
+
+.task-list .deadline:hover .deadline-text {
+	opacity: 1;
+}
+
+.task-list .deadline .till {
+	cursor: default;
+}
+
+.task-list .deadline .till i {
+	float: right;    line-height: inherit;
+	font-size: 0.9em;
+}
+
+.task-list .deadline .till .full-date {
+	float: right;    margin-right: 0.4em;
+	font-size: 0.85em;
+	opacity: 0.8;
+}
+
+.task-list .deadline .remove-deadline {
+	padding: 0;
+	background-color: transparent;
+	box-shadow: none;
+	font-size: 0.9em;
+}
+
+.task-list .deadline .remove-deadline:hover {
+	background-color: #000;
+	background-color: rgba(0,0,0,0.1);
+}
+
+
+.task-list .drop-tip {
+	display: none;
+	position: absolute;
+	z-index: 5;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border: 2px dashed rgba(161, 193, 96, 0.57);
+	background-color: #fff;
+	background-color: rgba(255,255,255,0.95);
+	text-align: center;
+	color: #a1c160;
+	pointer-events: none;
+	-webkit-transition: all 250ms;
+	transition: all 250ms;
+}
+
+.task-list .drop-target .drop-tip {
+	/* Using display instead of opacity to keep things responsive (fast) */
+	display: block;
+}
+
+.task-list .drop-target .drop-tip-text {
+	position: absolute;
+	width: 100%;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+}
+
+
 /*------------------- Sidebar -------------------*/
 
 .info {
@@ -625,6 +761,14 @@ input.create-box {
 	transform: rotate(-180deg);
 }
 
+
+h3 i.fa {
+	position: relative;
+	top: -0.15em;
+	font-size: 0.8em;
+	opacity: 0.45;
+	vertical-align: middle;
+}
 
 /*------------------- Filters -------------------*/
 

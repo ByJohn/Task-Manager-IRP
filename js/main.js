@@ -61,12 +61,14 @@ function getTimeUntilDate(date) {
 }
 
 //Date formatted as "YYYY-MM-DD".
-function getFormattedDeadline(date) {
+function getFormattedDeadline(date, addPrefix) {
+	addPrefix = typeof addPrefix !== 'undefined' ? addPrefix : true;
+
 	var dateData = getTimeUntilDate(date);
 	var text = '';
 
 	if(dateData.wholeMilliseconds >= 0) {
-		text += 'is ';
+		if(addPrefix) text += 'is ';
 		if(dateData.years > 0) text += 'in ' + dateData.years + ' year' + addSPlural(dateData.years);
 		else if(dateData.months > 0) text += 'in ' + dateData.months + ' month' + addSPlural(dateData.months);
 		else if(dateData.days > 1) text += 'in ' + dateData.days + ' day' + addSPlural(dateData.days);
@@ -74,7 +76,7 @@ function getFormattedDeadline(date) {
 		else if(dateData.days == 0 && dateData.wholeMilliseconds == 0) text += 'today';
 	}
 	else if(dateData.wholeMilliseconds < 0) {
-		text += 'was ';
+		if(addPrefix) text += 'was ';
 		if(dateData.years < 0) text += (dateData.years * -1) + ' year' + addSPlural((dateData.years * -1)) + ' ago';
 		else if(dateData.months < 0) text += (dateData.months * -1) + ' month' + addSPlural((dateData.months * -1)) + ' ago';
 		else if(dateData.days < -1) text += (dateData.days * -1) + ' day' + addSPlural((dateData.days * -1)) + ' ago';
@@ -597,7 +599,7 @@ var TaskView = Backbone.View.extend({
 		};
 
 		var dropTipTextHTML = '';
-		if(this.tempDropData.type === 'date') dropTipTextHTML = '+ <i class="fa fa-calendar"></i> &nbsp; Set dealine for ' + moment(this.tempDropData.value).format('Do MMMM YYYY');
+		if(this.tempDropData.type === 'date') dropTipTextHTML = '+ <i class="fa fa-calendar"></i> &nbsp; Set deadline for ' + moment(this.tempDropData.value).format('dddd, Do MMMM YYYY') + ' (' + getFormattedDeadline(this.tempDropData.value, false) + ')';
 
 		this.$dropTipText.html(dropTipTextHTML);
 	},

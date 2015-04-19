@@ -688,6 +688,25 @@ var TaskView = Backbone.View.extend({
 });
 
 
+
+
+
+
+/*------------------- Speech View -------------------*/
+
+var SpeechView = Backbone.View.extend({
+
+	
+
+});
+
+
+
+
+
+
+
+
 /*------------------- Tasks View -------------------*/
 /* Basically the global view, centred on the task list */
 
@@ -706,6 +725,8 @@ var TasksView = Backbone.View.extend({
 	},
 
 	initialize: function() {
+		this.speechView = new SpeechView({parentView: this});
+
 		this.form = {};
 		this.form.self = this.$el.find('form.create-form');
 
@@ -1108,6 +1129,8 @@ var DragAndDropView = Backbone.View.extend({
 });
 
 var dragDrop = new DragAndDropView();
+
+
 
 
 

@@ -183,6 +183,10 @@ strong, b {
 	font-weight: 700;
 }
 
+em {
+	font-style: italic;
+}
+
 /*------------------- Global -------------------*/
 
 noscript {
@@ -996,4 +1000,13 @@ td.fc-other-month .drag-event {
 
 .tag-list {
 
+}
+
+
+/*------------------- Speech Input -------------------*/
+
+.speech-field button {
+	background-color: transparent;
+	border: 1px solid #ccc;
+	color: inherit;
 }

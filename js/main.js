@@ -346,7 +346,7 @@ var tabsView = new TabsView();
 
 
 
-/*------------------- FIlters View -------------------*/
+/*------------------- Filters View -------------------*/
 
 var Filters = Backbone.View.extend({
 
@@ -426,6 +426,66 @@ var Task = Backbone.Model.extend({
 		else {
 			this.save({completed_time: -1})
 		}
+	},
+
+	hasDeadline: function() {
+		if(this.get('deadline') == '') return false;
+		else return true;
+	},
+
+	deadlineInFuture: function() {
+		if(!this.hasDeadline()) return false;
+
+		var today = moment().startOf('day'); //The start of the day today
+		var taskDate = moment(this.get('deadline'));
+		var duration = moment.duration(taskDate.diff(today));
+
+		if(duration.asMilliseconds() > 0) return true;
+		else return false;
+	},
+
+	deadlineInPast: function() {
+		if(!this.hasDeadline()) return false;
+
+		var today = moment().startOf('day'); //The start of the day today
+		var taskDate = moment(this.get('deadline'));
+		var duration = moment.duration(taskDate.diff(today));
+
+		if(duration.asMilliseconds() < 0) return true;
+		else return false;
+	},
+
+	deadlineToday: function() {
+		if(!this.hasDeadline()) return false;
+
+		var today = moment().startOf('day'); //The start of the day today
+		var taskDate = moment(this.get('deadline'));
+		var duration = moment.duration(taskDate.diff(today));
+
+		if(duration.asMilliseconds() == 0) return true;
+		else return false;
+	},
+
+	deadlineThisWeek: function() {
+		if(!this.hasDeadline()) return false;
+
+		var today = moment().startOf('isoweek'); //The start of the week today
+		var taskDate = moment(this.get('deadline')).startOf('isoweek');
+		var duration = moment.duration(taskDate.diff(today));
+
+		if(duration.asMilliseconds() == 0) return true;
+		else return false;
+	},
+
+	deadlineThisMonth: function() {
+		if(!this.hasDeadline()) return false;
+
+		var today = moment().startOf('month'); //The start of the month today
+		var taskDate = moment(this.get('deadline')).startOf('month');
+		var duration = moment.duration(taskDate.diff(today));
+
+		if(duration.asMilliseconds() == 0) return true;
+		else return false;
 	}
 
 });
@@ -747,7 +807,7 @@ var TasksView = Backbone.View.extend({
 		this.updateMessage(options);
 	},
 
-	//Gets all tasks on the current tab with the current filters
+	//Gets all tasks on the current tab
 	getAll: function() {
 		return tasks.where({'tab': tabsView.activeTab});
 	},
@@ -793,6 +853,7 @@ var TasksView = Backbone.View.extend({
 		this.softUpdateList();
 	},
 
+	//Gets all tasks on the current tab (via getAll()) and with the current search and filters
 	getSearchAndFilteredTasks: function() {
 		var filteredTasks = this.getAll(),
 			status = filters.status,
@@ -808,6 +869,7 @@ var TasksView = Backbone.View.extend({
 			});
 		}
 
+
 		if(status == 1) {
 			filteredTasks = _.filter(filteredTasks, function (task) {
 				return task.get('completed_time') == -1;
@@ -816,6 +878,38 @@ var TasksView = Backbone.View.extend({
 		else if(status == 2) {
 			filteredTasks = _.filter(filteredTasks, function (task) {
 				return task.get('completed_time') > -1;
+			});
+		}
+
+
+		if(deadline == 1) {
+			filteredTasks = _.filter(filteredTasks, function (task) {
+				return task.deadlineInFuture();
+			});
+		}
+		else if(deadline == 2) {
+			filteredTasks = _.filter(filteredTasks, function (task) {
+				return task.deadlineToday();
+			});
+		}
+		else if(deadline == 3) {
+			filteredTasks = _.filter(filteredTasks, function (task) {
+				return task.deadlineThisWeek();
+			});
+		}
+		else if(deadline == 4) {
+			filteredTasks = _.filter(filteredTasks, function (task) {
+				return task.deadlineThisMonth();
+			});
+		}
+		else if(deadline == 5) {
+			filteredTasks = _.filter(filteredTasks, function (task) {
+				return task.deadlineInPast();
+			});
+		}
+		else if(deadline == 6) {
+			filteredTasks = _.filter(filteredTasks, function (task) {
+				return !task.hasDeadline();
 			});
 		}
 

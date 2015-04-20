@@ -56,6 +56,9 @@ Tested in Chrome
 						<form class="create-form">
 							<input type="text" class="create-box" placeholder="Create or search" />
 							<input type="submit" class="submit" value="+" disabled>
+							<div class="speech-spinner">
+								<i class="fa fa-spinner fa-pulse"></i>
+							</div>
 							<div class="tasks-message"></div>
 						</form>
 					</div>
@@ -115,7 +118,7 @@ Tested in Chrome
 
 					<div class="speech-field">
 						<h3><i class="fa fa-microphone"></i> Speech Input</h3>
-						<p><button>Enable speech input</button></p>
+						<p><button class="toggle-speech">Enable speech input</button></p>
 						<div class="info">
 							Say "New task" to create a task
 						</div>

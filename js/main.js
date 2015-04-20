@@ -135,6 +135,10 @@ function map(value, in_min , in_max , out_min , out_max ) {
 	return ( value - in_min ) * ( out_max - out_min ) / ( in_max - in_min ) + out_min;
 }
 
+function capitalizeFirstLetter(string) {
+	return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 
 /*------------------- Document Ready -------------------*/
 
@@ -156,9 +160,14 @@ $(function() {
 
 /*------------------- Sounds -------------------*/
 
+/*
+Sounds from:
+http://rcptones.com/dev_tones/
+*/
 var sounds = {
 	chime_dim: new Audio("sounds/chime_dim.mp3"),
-	chime_done: new Audio("sounds/chime_done.mp3")
+	chime_done: new Audio("sounds/chime_done.mp3"),
+	beep_echo_lo: new Audio("sounds/beep_echo_lo.mp3"),
 };
 
 
@@ -708,7 +717,244 @@ var TaskView = Backbone.View.extend({
 
 var SpeechView = Backbone.View.extend({
 
-	
+	el: $(".speech-field"),
+
+	events: {
+		'click .toggle-speech' : 'toggleEnabled'
+	},
+
+	enabled: false,
+	inFocus: true,
+
+	listenMode: 0, // 0=Passive, 1=Active(Task)
+	prepareListenMode: -1,
+
+	submitted: false,
+
+	recognition: null,
+
+	started: false,
+
+	initialize: function(options) {
+		var that = this;
+
+		this.taskList = options.parentView;
+		this.form = this.taskList.form;
+
+		this.toggleButton = this.$el.find('.toggle-speech');
+
+		if (!('webkitSpeechRecognition' in window)) {
+			this.$el.hide();
+		}
+		else {
+			this.recognition = new webkitSpeechRecognition();
+			this.recognition.continuous = true;
+			this.recognition.interimResults = true;
+
+			this.recognition.onstart = function(event) {
+				that.recognitionOnstart(event);
+			}
+
+			this.recognition.onresult = function(event) {
+				that.recognitionOnresult(event);
+			}
+
+			this.recognition.onend = function(event) {
+				that.recognitionOnend(event);
+			}
+
+			this.recognition.onerror = function(event) {
+				that.recognitionOnerror(event);
+			}
+		}
+
+		$(window).blur(function() {
+			that.inFocus = false;
+			that.stopListening();
+		}).focus(function() {
+			that.inFocus = true;
+			that.setPassive();
+			that.startListening();
+		});
+	},
+
+	toggleEnabled: function(override) {
+		override = typeof override !== 'undefined' ? override : this.enabled;
+
+		if(this.enabled) {
+			this.enabled = false;
+			this.toggleButton.html('Enable speech input');
+			this.stopListening();
+		}
+		else {
+			this.enabled = true;
+			this.toggleButton.html('Disable speech input');
+			this.setPassive();
+			this.startListening();
+		}
+	},
+
+
+	recognitionOnstart: function(event) {
+		this.started = true;
+	},
+
+	recognitionOnresult: function(event) {
+		// console.debug(this.listenMode);
+
+		var interim_transcript = '',
+		currentWords = ''
+		length = event.results.length-1;
+
+		if(this.listenMode === 0) {
+			if(event.results[length][0].transcript.indexOf('new task') !== -1) {
+				this.setActive();
+			}	
+		}
+
+		else if(this.listenMode === 1) {
+			var finalWordsFound = false;
+			for (var i = event.resultIndex; i < event.results.length; ++i) {
+				if (event.results[i].isFinal) {
+					finalWordsFound = true;
+					currentWords += event.results[i][0].transcript;
+				} else {
+					interim_transcript += event.results[i][0].transcript;
+				}
+			}
+			
+			currentWords = currentWords.trim();
+			
+			//console.debug(interim_transcript, ':', currentWords);
+
+			var taskText = interim_transcript;
+			if(finalWordsFound) taskText = currentWords;
+
+			this.form.name.val(capitalizeFirstLetter(taskText));
+			this.form.name.trigger('speechInput', null);
+
+			if(finalWordsFound) this.submitForm();
+
+			//Submit the task when the result is "final", the listener ends, the user submits the task or after a certain time period
+		}
+	},
+
+	recognitionOnend: function(event) {
+		this.started = false;
+
+		var justSetToActiveMode = false;
+
+		if(this.prepareListenMode != -1) {
+			this.listenMode = this.prepareListenMode;
+			this.prepareListenMode = -1;
+
+			if(this.listenMode === 1) {
+				justSetToActiveMode = true;
+				this.startFormInput();
+			}
+		}
+
+		if((!this.enabled || !this.inFocus) && (!justSetToActiveMode && this.listenMode == 1)) {
+			this.stopFormInput();
+			this.setPassive();
+		}
+		if(this.enabled && this.inFocus && !justSetToActiveMode && this.listenMode == 1 && !this.submitted) this.submitForm();
+
+		if(this.enabled && this.inFocus && !this.started) this.recognition.start(); //Restarts the listener
+	},
+
+	recognitionOnerror: function(error) {
+		if(error.error == 'no-speech') {
+			if(this.listenMode == 1) {
+				this.stopFormInput();
+				this.setPassive();
+			}
+		}
+		if(error.error == 'aborted') {
+		}
+		else {
+			console.debug('onerror', error);
+		}
+	},
+
+
+	stopListening: function() {
+		if(this.started) this.recognition.stop();
+	},
+
+	abort: function() {
+		if(this.started) this.recognition.abort();
+	},
+
+	startListening: function() {
+		if(!this.started && this.enabled) this.recognition.start();
+	},
+
+
+	setPassive: function() {
+		if(this.listenMode !== 0) {
+			if(this.started) {
+				this.changeModeTo(0);
+			}
+			else {
+				this.listenMode = 0;
+			}
+		}
+	},
+
+	setActive: function() {
+		if(this.listenMode !== 1) {
+			if(this.started) {
+				this.changeModeTo(1);
+			}
+			else {
+				this.listenMode = 1;
+				this.startFormInput();
+			}
+		}
+	},
+
+	changeModeTo: function(mode) {
+		this.prepareListenMode = mode;
+		this.stopListening();
+	},
+
+
+	startFormInput: function() {
+		sounds.chime_dim.play();
+
+		this.form.name.val('').focus();
+		this.form.self.addClass('speech-input');
+		this.submitted = false;
+	},
+
+	stopFormInput: function(beep) {
+		beep = typeof beep !== 'undefined' ? beep : true;
+
+		if(beep) sounds.beep_echo_lo.play();
+
+		this.form.name.blur();
+		this.form.self.removeClass('speech-input');
+	},
+
+
+	submitForm: function() {
+		this.submitted = true;
+		sounds.chime_done.play();
+		this.form.self.submit();
+	},
+
+	//Called from the parent task view
+	taskSubmitted: function() {
+		this.abort();
+		this.stopFormInput(false);
+		this.setPassive();
+		this.startListening();
+	},
+
+	cancelActive: function() {
+		
+	}
 
 });
 
@@ -728,7 +974,8 @@ var TasksView = Backbone.View.extend({
 
 	events: {
 		'submit .create-form' : 'createOnSubmit',
-		'keyup .create-box' : 'textKeyUp',
+		'keyup .create-box' : 'textFieldUpdated',
+		'speechInput .create-box' : 'textFieldUpdated',
 		'click .clear' : 'clearTextbox',
 
 		'tabChanged .tabs' : 'tabChanged',
@@ -737,8 +984,6 @@ var TasksView = Backbone.View.extend({
 	},
 
 	initialize: function() {
-		this.speechView = new SpeechView({parentView: this});
-
 		this.form = {};
 		this.form.self = this.$el.find('form.create-form');
 
@@ -758,13 +1003,15 @@ var TasksView = Backbone.View.extend({
 		this.listenTo(tasks, 'destroy', this.softUpdateList);
 		this.listenTo(tasks, 'change', this.softUpdateList);
 
+		this.speechView = new SpeechView({parentView: this});
+
 		tasks.fetch({reset: true});
 	},
 
 	render: function() {
 	},
 
-	textKeyUp: function() {
+	textFieldUpdated: function() {
 		this.softUpdateList();
 
 		if(this.form.name.val() == '') {
@@ -780,6 +1027,9 @@ var TasksView = Backbone.View.extend({
 	createOnSubmit: function(e) {
 		e.preventDefault();
 		this.createTask();
+		this.textFieldUpdated();
+
+		this.speechView.taskSubmitted();
 	},
 
 	createTask: function() {

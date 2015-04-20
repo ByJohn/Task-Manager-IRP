@@ -382,7 +382,10 @@ form.create-form {
 
 input.create-box {
 	padding-right: 2.4em;
+}
 
+form.create-form.speech-input input.create-box {
+	background-color: #EBFACD;
 }
 
 .create-form .submit {
@@ -400,6 +403,20 @@ input.create-box {
 .create-form .submit[disabled] {
 	opacity: 0.7;
 	cursor: default;
+}
+
+.create-form .speech-spinner {
+	display: none;
+	position: absolute;
+	top: 50%;
+	right: 3em;
+	color: #BCC1B3;
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+}
+
+.create-form.speech-input .speech-spinner {
+	display: block;
 }
 
 .tasks-message {

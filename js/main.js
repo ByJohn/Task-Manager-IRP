@@ -154,6 +154,18 @@ $(function() {
 
 
 
+/*------------------- Sounds -------------------*/
+
+var sounds = {
+	chime_dim: new Audio("sounds/chime_dim.mp3"),
+	chime_done: new Audio("sounds/chime_done.mp3")
+};
+
+
+
+
+
+
 /*------------------- Tab Model -------------------*/
 
 var Tab = Backbone.Model.extend({

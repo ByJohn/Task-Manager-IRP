@@ -1165,3 +1165,26 @@ td.fc-other-month .drag-event {
 .speech-field.enabled .info {
 	display: block;
 }
+
+
+/*------------------- Shortcuts Input -------------------*/
+
+.shortcuts-field {
+
+}
+
+.shortcuts-field .info {
+	display: block;
+}
+
+.shortcuts-field.active .info {
+	display: none;
+}
+
+.shortcuts-field .shortcuts {
+	display: none;
+}
+
+.shortcuts-field.active .shortcuts {
+	display: block;
+}

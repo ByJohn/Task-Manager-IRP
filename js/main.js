@@ -1056,7 +1056,7 @@ var TasksView = Backbone.View.extend({
 		this.textFieldUpdated();
 
 		this.speechView.taskSubmitted();
-		
+
 		this.form.name.focus();
 	},
 
@@ -1686,3 +1686,36 @@ var ToastView = Backbone.View.extend({
 });
 
 var toast = new ToastView();
+
+
+
+
+
+
+/*------------------- Body View -------------------*/
+//The view of the body. Used for keyboard shortcuts
+
+var BodyView = Backbone.View.extend({
+
+	el: $("body"),
+
+	events: {
+		
+	},
+
+	initialize: function() {
+
+		//Toggles the shortcuts table
+		Mousetrap.bind(['/', '?'], function() {
+			$('.shortcuts-field').toggleClass('active');
+		});
+
+		Mousetrap.bind('n', function() {
+			$('input.create-box').focus();
+		}, 'keyup');
+
+	}
+
+});
+
+var bodyView = new BodyView();

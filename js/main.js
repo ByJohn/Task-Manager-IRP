@@ -1056,6 +1056,8 @@ var TasksView = Backbone.View.extend({
 		this.textFieldUpdated();
 
 		this.speechView.taskSubmitted();
+		
+		this.form.name.focus();
 	},
 
 	createTask: function() {

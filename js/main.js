@@ -1190,9 +1190,20 @@ var TasksView = Backbone.View.extend({
 		var filteredTasks = this.getAll(),
 			status = filters.status,
 			deadline = filters.deadline,
-			searchText = this.form.name.val();
+			searchText = this.form.name.val(),
+			blacklistedChars = [
+				'|',
+				'?',
+				'*',
+				'(',
+				')',
+				'[',
+				']',
+				'+',
+			]; 
 
-		if(searchText.length) {
+		//TODO: Fix errors when using RegEx characters in the search query
+		if(searchText.length && !_.contains(blacklistedChars, searchText)) {
 			filteredTasks = _.filter(filteredTasks, function (task) {
 				var str = task.get('text').toLowerCase(),
 					pattern = searchText.toLowerCase();

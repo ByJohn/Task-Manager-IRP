@@ -740,8 +740,10 @@ var SpeechView = Backbone.View.extend({
 
 		this.taskList = options.parentView;
 		this.form = this.taskList.form;
+		this.taskNamePlaceholder = this.form.name.attr('placeholder');
 
 		this.toggleButton = this.$el.find('.toggle-speech');
+		this.feedbackBox = this.$el.find('.speech-feedback');
 
 		if (!('webkitSpeechRecognition' in window)) {
 			this.$el.hide();
@@ -783,12 +785,15 @@ var SpeechView = Backbone.View.extend({
 
 		if(this.enabled) {
 			this.enabled = false;
+			this.$el.removeClass('enabled');
 			this.toggleButton.html('Enable speech input');
 			this.stopListening();
 		}
 		else {
 			this.enabled = true;
+			this.$el.addClass('enabled');
 			this.toggleButton.html('Disable speech input');
+			this.updateFeedback('');
 			this.setPassive();
 			this.startListening();
 		}
@@ -806,36 +811,46 @@ var SpeechView = Backbone.View.extend({
 		currentWords = ''
 		length = event.results.length-1;
 
+		var finalWordsFound = false;
+		for (var i = event.resultIndex; i < event.results.length; ++i) {
+			if (event.results[i].isFinal) {
+				finalWordsFound = true;
+				currentWords += event.results[i][0].transcript;
+			} else {
+				interim_transcript += event.results[i][0].transcript;
+			}
+		}
+		
+		currentWords = currentWords.trim();
+
+		var finalWords = interim_transcript.trim();
+		if(finalWordsFound) finalWords = currentWords;
+		
+		this.updateFeedback(finalWords);
+
+
 		if(this.listenMode === 0) {
-			if(event.results[length][0].transcript.indexOf('new task') !== -1) {
+			if(interim_transcript.indexOf('new task') !== -1) {
+				this.abort();
 				this.setActive();
 			}	
 		}
 
 		else if(this.listenMode === 1) {
-			var finalWordsFound = false;
-			for (var i = event.resultIndex; i < event.results.length; ++i) {
-				if (event.results[i].isFinal) {
-					finalWordsFound = true;
-					currentWords += event.results[i][0].transcript;
-				} else {
-					interim_transcript += event.results[i][0].transcript;
-				}
-			}
-			
-			currentWords = currentWords.trim();
-			
-			//console.debug(interim_transcript, ':', currentWords);
 
-			var taskText = interim_transcript;
-			if(finalWordsFound) taskText = currentWords;
-
-			this.form.name.val(capitalizeFirstLetter(taskText));
+			this.form.name.val(capitalizeFirstLetter(finalWords));
 			this.form.name.trigger('speechInput', null);
 
 			if(finalWordsFound) this.submitForm();
 
-			//Submit the task when the result is "final", the listener ends, the user submits the task or after a certain time period
+			/*
+			Submit the task when
+				the result is "final" - Done
+				the listener's end event is fired - Done
+				the user submits the task - Done
+				after a certain time period
+			*/
+
 		}
 	},
 
@@ -870,7 +885,7 @@ var SpeechView = Backbone.View.extend({
 				this.setPassive();
 			}
 		}
-		if(error.error == 'aborted') {
+		else if(error.error == 'aborted') {
 		}
 		else {
 			console.debug('onerror', error);
@@ -924,6 +939,7 @@ var SpeechView = Backbone.View.extend({
 		sounds.chime_dim.play();
 
 		this.form.name.val('').focus();
+		this.form.name.attr('placeholder', 'Dictate your task...');
 		this.form.self.addClass('speech-input');
 		this.submitted = false;
 	},
@@ -934,6 +950,7 @@ var SpeechView = Backbone.View.extend({
 		if(beep) sounds.beep_echo_lo.play();
 
 		this.form.name.blur();
+		this.form.name.attr('placeholder', this.taskNamePlaceholder);
 		this.form.self.removeClass('speech-input');
 	},
 
@@ -952,8 +969,15 @@ var SpeechView = Backbone.View.extend({
 		this.startListening();
 	},
 
-	cancelActive: function() {
-		
+	updateFeedback: function(text) {
+		if(text != '') text = '"' + text + '"';
+
+		this.feedbackBox
+		.stop(true)
+		.css('opacity', 1)
+		.html(text)
+		.delay(5000)
+		.animate({opacity: 0}, 5000);
 	}
 
 });

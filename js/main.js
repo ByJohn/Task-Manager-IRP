@@ -1000,6 +1000,7 @@ var TasksView = Backbone.View.extend({
 
 	events: {
 		'submit .create-form' : 'createOnSubmit',
+		'keydown .create-box' : 'textFieldKeyUp',
 		'keyup .create-box' : 'textFieldUpdated',
 		'speechInput .create-box' : 'textFieldUpdated',
 		'click .clear' : 'clearTextbox',
@@ -1035,6 +1036,19 @@ var TasksView = Backbone.View.extend({
 	},
 
 	render: function() {
+	},
+
+	textFieldKeyUp: function(e) {
+		if (e.which === ESC_KEY) {
+			this.form.name.blur();
+
+			//TODO: Move this to the Speech View under a blur event listener, but make sure it's only run when the ESC key is pressed, like it will be here
+			if(this.speechView.started && this.speechView.listenMode == 1) {
+				this.speechView.abort();
+				this.speechView.stopFormInput();
+				this.speechView.setPassive();
+			}
+		}
 	},
 
 	textFieldUpdated: function() {
@@ -1710,7 +1724,7 @@ var BodyView = Backbone.View.extend({
 			$('.shortcuts-field').toggleClass('active');
 		});
 
-		Mousetrap.bind('n', function() {
+		Mousetrap.bind(['n', 's', 'f'], function() {
 			$('input.create-box').focus();
 		}, 'keyup');
 

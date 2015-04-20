@@ -1012,13 +1012,131 @@ td.fc-other-month .drag-event {
 /*------------------- Tags -------------------*/
 
 .tags-field {
-
+	display: none;
 }
 
 .tag-list {
 
 }
 
+.tag-list .editing .static, .tag-list .edit {
+	display: none;
+}
+
+.tags-field .tag {
+
+}
+
+.tags-field .tag-circle-container {
+	float: left;
+	width: 15%;
+}
+
+.tags-field .tag-circle {
+	position: absolute;
+	width: 2.4em;
+	height: 2.4em;
+	border-radius: 100px;
+	background-color: #FFFFFF;
+	text-align: center;
+	-webkit-transition: border-radius 250ms;
+	transition: border-radius 250ms;
+}
+
+.tags-field .drag-tag {
+
+}
+
+.tags-field .drag-tag .tag-name {
+
+}
+
+.tags-field .drag-tag.dragging {
+
+}
+
+.tags-field .drag-tag.dragging .tag-name {
+
+}
+
+.tags-field .tag-name-container {
+	float: right;
+	width: 84%;
+	text-align: left;
+
+	font-size: 1.2em;
+}
+
+.tags-field form.edit {
+
+}
+
+.tags-field .name {
+
+}
+
+.tags-field label.name {
+
+}
+
+.tags-field input.name {
+
+}
+
+.tags-field form button {
+	position: absolute;
+	top: 0;
+	height: 100%;
+	border-radius: 0;
+	font-weight: 400;
+	font-size: 0.9em;
+}
+
+.tags-field form .update {
+	left: 0;
+}
+
+.tags-field .delete {
+	right: 0;
+	background-color: #C34B4B;
+	color: #fff;
+	-webkit-transition: all 250ms;
+	transition: all 250ms;
+}
+
+.tags-field .delete:hover {
+	background-color: #000;
+}
+
+.tags-field button.new-tag {
+	display: block;
+	width: 100%;
+	padding: 0;
+	background-color: transparent;
+	box-shadow: none;
+	color: inherit;
+}
+
+.tags-field button.new-tag .tag-circle {
+	border: 1px solid #D0D0D0;
+	-webkit-transition: all 250ms;
+	transition: all 250ms;
+}
+
+.tags-field button.new-tag:hover .tag-circle {
+	background-color: #EAEAEA;
+	color: #838383;
+}
+
+.tags-field button.new-tag .tag-circle .plus {
+	font-size: 1.6em;
+	color: #A9A9A9;
+}
+
+.tags-field button.new-tag .tag-name-container {
+	padding-top: 0.3em;
+	
+}
 
 /*------------------- Speech Input -------------------*/
 
@@ -1038,4 +1156,12 @@ td.fc-other-month .drag-event {
 	color: #9E9393;
 	font-size: 0.8em;
 	font-style: italic;
+}
+
+.speech-field .info {
+	display: none;
+}
+
+.speech-field.enabled .info {
+	display: block;
 }

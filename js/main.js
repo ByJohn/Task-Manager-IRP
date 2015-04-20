@@ -439,6 +439,7 @@ var Task = Backbone.Model.extend({
 			'deadline': '',
 			'created_time': Math.round(new Date().getTime() / 1000),
 			'completed_time': -1,
+			//'tags': [],
 			'order': 0
 		};
 	},
@@ -688,6 +689,7 @@ var TaskView = Backbone.View.extend({
 
 		var dropTipTextHTML = '';
 		if(this.tempDropData.type === 'date') dropTipTextHTML = '+ <i class="fa fa-calendar"></i> &nbsp; Set deadline for ' + moment(this.tempDropData.value).format('dddd, Do MMMM YYYY') + ' (' + getFormattedDeadline(this.tempDropData.value, false) + ')';
+		else if(this.tempDropData.type === 'tag') dropTipTextHTML = '+ <i class="fa fa-tag"></i> &nbsp; Add tag ' + this.tempDropData.value;
 
 		this.$dropTipText.html(dropTipTextHTML);
 	},
@@ -1283,6 +1285,152 @@ var TasksView = Backbone.View.extend({
 var tasksView = new TasksView();
 
 
+
+
+
+
+
+
+/*------------------- Tag Model -------------------*/
+
+var Tag = Backbone.Model.extend({
+
+	idAttribute: 'id',
+
+	defaults: function() {
+		return {
+			'name': 'New tag',
+			'colour': 'A1C160'
+		};
+	},
+
+	initialize: function() {
+
+	}
+
+});
+
+
+/*------------------- Tag Collection -------------------*/
+
+var Tags = Backbone.Collection.extend({
+
+	model: Tag,
+	comparator: 'name',
+	localStorage: new Backbone.LocalStorage('task-manager-tags'),
+
+});
+
+//var tags = new Tags();
+
+
+/*------------------- Tag View -------------------*/
+
+var TagView = Backbone.View.extend({
+
+	tagName:  "li",
+	className: 'tag cf no-select',
+
+	template: _.template($('#tag-template').html()),
+
+	events: {
+		'dblclick label.text' : 'edit',
+		'keydown input.text': 'textKeyDown',
+		'blur input.text': 'textboxBlured',
+		'submit form.edit' : 'updateTag',
+		'mousedown .delete' : 'clear'
+	},
+
+	initialize: function() {
+		this.listenTo(this.model, 'change', this.render);
+		this.listenTo(this.model, 'destroy', this.remove);
+		this.listenTo(this.model, 'remove', this.remove);
+	},
+
+	render: function() {
+		this.done = false;
+
+		this.$el.toggleClass('done', this.done);
+		
+		var templateData = this.model.toJSON();
+
+		this.$el.html(this.template(templateData));
+
+		this.input = this.$('input.text');
+
+		return this;
+	},
+
+	edit: function() {
+		this.$el.addClass("editing");
+		this.input.focus();
+	},
+
+	updateTag: function(e) {
+		if(typeof e !== 'undefined') e.preventDefault();
+
+		var value = this.input.val();
+		if (!value) {
+			this.clear();
+		} else {
+			this.model.save({name: value});
+			this.$el.removeClass("editing");
+		}
+	},
+
+	textKeyDown: function(e) {
+		if (e.which === ESC_KEY) {
+			this.$el.removeClass('editing');
+			// Also reset the hidden input back to the original value.
+			this.input.val(this.model.get('name'));
+		}
+	},
+
+	textboxBlured: function () {
+		this.updateTag();
+	},
+
+	clear: function() {
+		//backup.createUndo('Tag deleted');
+		var that = this;
+		this.$el.velocity("slideUp", { duration: globals.slideSpeed, complete: function() {
+			that.model.destroy();
+		}});
+	}
+
+});
+
+/*------------------- Tabs View -------------------*/
+
+var TabsView = Backbone.View.extend({
+
+	el: $(".tags-field"),
+
+	events: {
+		
+	},
+
+	initialize: function() {
+		this.list = this.$el.find('.task-list');
+
+		this.listenTo(tags, 'add', this.render);
+		this.listenTo(tags, 'change', this.render);
+		this.listenTo(tags, 'destroy', this.render);
+		this.listenTo(tags, 'reset', this.render);
+
+		tags.fetch({reset: true});
+	},
+
+	render: function() {
+	},
+
+	createTag: function() {
+		tags.create({name: 'zz New Tag'});
+	}
+	
+});
+
+//var tabsView = new TabsView();
 
 
 

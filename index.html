@@ -111,9 +111,16 @@ Tested in Chrome
 
 					<div class="tags-field">
 						<h3><i class="fa fa-tag"></i> Tags</h3>
-						<div class="tag-list">
-							Tag list
-						</div>
+						<ul class="tag-list">
+						</ul>
+						<button class="new-tag cf">
+							<div class="tag-circle-container">
+								<div class="tag-circle">
+									<div class="plus">+</div>
+								</div>
+							</div>
+							<div class="tag-name-container">New tag</div>
+						</button>
 					</div>
 
 					<div class="speech-field">
@@ -189,6 +196,34 @@ Tested in Chrome
 					<div class="triangle"></div>
 				</div>
 			</div>
+		</script>
+
+		<script type="text/template" id="tag-template">
+
+			<div class="static">
+				<div class="tag-circle-container">
+					<div class="draggable-container">
+						<div class="drag-tag tag-circle draggable" data-drop-type="tag" data-drop-value="<%- id %>" style="background-color: #<%- colour %> ;">
+							<div class="tag-name"><%- name %></div>
+						</div>
+					</div>
+				</div>
+				<div class="tag-name-container">
+					<label class="name"><%- name %></label>
+				</div>
+			</div>
+
+			<form action="" class="edit cf">
+				<div class="tag-circle-container">
+					<div class="tag-circle" style="background-color: #<%- colour %> ;"></div>
+				</div>
+				<div class="tag-name-container">
+					<input class="name edit" type="text" value="<%- name %>" />
+					<button type="submit" class="update" title="Update"><i class="fa fa-floppy-o"></i></button>
+					<button class="delete" title="Delete"><i class="fa fa-trash-o"></i></button>
+				</div>
+			</form>
+
 		</script>
 
 	</div>

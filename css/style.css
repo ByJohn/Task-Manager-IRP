@@ -153,7 +153,7 @@ h2 {
 }
 
 h3 {
-	margin-top: 1.9em;
+	margin-top: 1.6em;
 	margin-bottom: 0.3em;
 	font-size: 1.3em;
 }
@@ -459,6 +459,10 @@ form.create-form.speech-input input.create-box {
 	transition: opacity 250ms;
 }
 
+.task-list .task.selected {
+	background-color: #F2F2F2;
+}
+
 .task-list .task:first-child {
 	border-top: 1px solid #DBDBDB;
 }
@@ -493,7 +497,7 @@ form.create-form.speech-input input.create-box {
 
 .task-list .task.ui-sortable-helper {
 	opacity: 1 !important;
-	box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+	box-shadow: 0 1px 10px rgba(0,0,0,0.1);
 }
 
 .task-list .task.ui-sortable-placeholder {
@@ -1183,8 +1187,58 @@ td.fc-other-month .drag-event {
 
 .shortcuts-field .shortcuts {
 	display: none;
+	font-size: 0.8em;
 }
 
 .shortcuts-field.active .shortcuts {
 	display: block;
+}
+
+.shortcuts-field table {
+
+}
+
+.shortcuts-field table.left {
+	float: left;
+}
+
+.shortcuts-field table.right {
+	float: right;
+}
+
+.shortcuts-field table.right td:nth-child(1) {
+	/* text-align: right; */
+}
+
+.shortcuts-field table.centre {
+	clear: both;
+}
+
+.shortcuts-field tr {
+
+}
+
+.shortcuts-field td {
+	padding: 4px 0 12px;
+
+}
+
+.shortcuts-field td:nth-child(1) {
+	padding-right: 10px;
+
+}
+
+.shortcuts-field td:nth-child(2) {
+
+}
+
+.shortcuts-field td span {
+	display: inline-block;
+	margin-left: 1px;
+	padding: 0.1em 0.3em;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	line-height: 1;
+	font-family: monospace;
+	font-size: 1.4em;
 }

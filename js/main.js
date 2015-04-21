@@ -1729,16 +1729,93 @@ var BodyView = Backbone.View.extend({
 	},
 
 	initialize: function() {
+		var that = this;
+
+		this.taskList = $('.task-list');
+
+		this.setupShortcuts();
+
+		this.setupEvents();
+
+		this.render();
+
+	},
+
+	render: function() {
+		if (navigator.userAgent.indexOf('Mac OS X') != -1) {
+			$('.shortcuts td span').each(function(i) {
+				$(this).text( $(this).text().replace('Ctrl', '&#8984;') );
+			});
+		}
+
+		return this;
+	},
+
+	setupShortcuts: function() {
+		var that = this;
 
 		//Toggles the shortcuts table
-		Mousetrap.bind(['/', '?'], function() {
-			$('.shortcuts-field').toggleClass('active');
+		Mousetrap.bind(['/', '?'], function() { $('.shortcuts-field').toggleClass('active'); });
+
+		Mousetrap.bind(['n', 's', 'c', 'f'], function() { $('input.create-box').focus(); }, 'keyup');
+
+		Mousetrap.bind('up', function() { that.navigateTasks(true) });
+		Mousetrap.bind('down', function() { that.navigateTasks(false) });
+	},
+
+	setupEvents: function() {
+		var that = this;
+
+		this.taskList.on('mouseenter', '.task', function() {
+			that.taskList.find('.task').removeClass('selected');
+			$(this).addClass('selected');
 		});
 
-		Mousetrap.bind(['n', 's', 'f'], function() {
-			$('input.create-box').focus();
-		}, 'keyup');
+		this.taskList.on('mouseleave', '.task', function() {
+			$(this).removeClass('selected');
+		});
 
+	},
+
+	getVisiableTasks: function() {
+		if(this.taskList.hasClass('filtered-list')) {
+			var tasks = this.taskList.find('li.task.filtered');
+		}
+		else {
+			var tasks = this.taskList.find('li.task:visible');
+		}
+		return tasks;
+	},
+
+	navigateTasks: function(up) {
+		var tasks = this.getVisiableTasks();
+
+		var selectedTaskIndex = null;
+		tasks.each(function(i) {
+			if($(this).hasClass('selected')) {
+				selectedTaskIndex = i;
+				return false;
+			}
+		});
+
+		this.taskList.find('.task').removeClass('selected');
+
+		if(selectedTaskIndex !== null) {
+			var newIndex = selectedTaskIndex;
+			if(up) newIndex--;
+			else newIndex++;
+
+			if(newIndex < 0) newIndex = 0;
+			if(newIndex > tasks.length - 1) newIndex = tasks.length - 1;
+
+			tasks.eq(newIndex).addClass('selected');
+		}
+		else {
+			if(up) tasks.last().addClass('selected');
+			else tasks.first().addClass('selected');
+		}
+
+		//TODO: Scroll to selected task in long lists
 	}
 
 });

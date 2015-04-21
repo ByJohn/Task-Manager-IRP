@@ -1010,6 +1010,15 @@ var TasksView = Backbone.View.extend({
 		'dropdownChanged .filters': 'dropdownChanged'
 	},
 
+	tips: [
+		'Double click to edit a task.',
+		'If a task looks too daunting, split it up into smaller tasks.',
+		'Try to keep your lists short.',
+		'Put the most unpleasant task first. When it\'s done, the rest of the list will feel easier.'
+
+	],
+	currentTip: -1,
+
 	initialize: function() {
 		this.form = {};
 		this.form.self = this.$el.find('form.create-form');
@@ -1022,6 +1031,7 @@ var TasksView = Backbone.View.extend({
 
 		this.list = this.$el.find('.task-list');
 		this.tasksMessage = this.$el.find('.tasks-message');
+		this.tipBox = this.$el.find('.tip-box');
 
 		this.listenTo(tasks, 'add', this.addOneBefore);
 		this.listenTo(tasks, 'reset', this.addAll);
@@ -1030,12 +1040,31 @@ var TasksView = Backbone.View.extend({
 		this.listenTo(tasks, 'destroy', this.softUpdateList);
 		this.listenTo(tasks, 'change', this.softUpdateList);
 
+		this.listenTo(tasks, 'change', this.render);
+		this.listenTo(tasks, 'destroy', this.render);
+		this.listenTo(tasks, 'reset', this.render);
+
 		this.speechView = new SpeechView({parentView: this});
 
 		tasks.fetch({reset: true});
 	},
 
 	render: function() {
+		if(this.getAll().length === 0) {
+			this.currentTip++;
+			if(this.currentTip > this.tips.length - 1) this.currentTip = 0
+
+			this.tipBox
+			.html('<i class="fa fa-lightbulb-o"></i>&nbsp; <strong>Tip</strong>: ' + this.tips[this.currentTip])
+			.fadeIn(1000);
+		}
+		else {
+			this.tipBox
+			.hide()
+			.html('');
+		}
+
+		return this;
 	},
 
 	textFieldKeyUp: function(e) {
@@ -1304,6 +1333,7 @@ var TasksView = Backbone.View.extend({
 
 
 	tabChanged: function(e, tabID) {
+		this.render();
 		this.addAll(true);
 	}
 	

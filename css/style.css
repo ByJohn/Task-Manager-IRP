@@ -734,6 +734,21 @@ form.create-form.speech-input input.create-box {
 }
 
 
+.tip-box {
+	position: absolute;
+	/* z-index: -1; */
+	top: 23%;
+	width: 100%;
+	text-align: center;
+	color: #C3C3C8;
+	font-weight: 300;
+}
+
+.tip-box strong {
+	font-weight: 400;
+}
+
+
 /*------------------- Sidebar -------------------*/
 
 .info {

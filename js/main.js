@@ -976,7 +976,7 @@ var SpeechView = Backbone.View.extend({
 	},
 
 	updateFeedback: function(text) {
-		if(text != '') text = '"' + text + '"';
+		if(text != '') text = 'What is heard: "' + text + '"';
 
 		this.feedbackBox
 		.stop(true)

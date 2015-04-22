@@ -2,16 +2,24 @@
 
 A task management web application built for my Individual Research Project at the University of Gloucestershire.
 
-SSL files (cert.pem & key.pem) are dummy, non-production files used for local testing over https using [http-server-basicauth-ssl](https://www.npmjs.com/package/http-server-basicauth-ssl) Node package.
+##Demo
+
+[www.byjohn.github.io/task-manager-irp](https://byjohn.github.io/task-manager-irp/)
+
+##Voice Input
+
+This application uses the [Web Speech API](https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html) to handle voice input of tasks. At the time of writing, this API is only available in Google Chrome and will only work continuously on HTTPS.
 
 ##To-do
 
-- Make fully responsive
-- Use package manager (NPM/Bower?) for third party dependencies (in vendor folder)
 - Change to dropdown that has options for "hidden" and "faded"
 - Add "delete all completed tasks" button
 - A empty data messages (eg "All tasks completed, awesome!")
-- Fix height issue with overlflow scroll on task list on short screens
+- Fix height issue with overflow scroll on task list on short screens
+- Make fully responsive
+- Use package manager (NPM/Bower?) for third party dependencies (in vendor folder)
+- Modularize the JavaScript into multiple files to make it more manageable
+- Comment code
 - Tabs
 	- Add reorder functionality
 - Undo function
@@ -30,3 +38,6 @@ SSL files (cert.pem & key.pem) are dummy, non-production files used for local te
 	- Reorder
 - Add drag and drop task creation
 	- Add files to existing tasks
+
+
+Please note: SSL files (cert.pem & key.pem) are dummy, non-production files generated for local testing over HTTPS using the [http-server-basicauth-ssl](https://www.npmjs.com/package/http-server-basicauth-ssl) Node package.

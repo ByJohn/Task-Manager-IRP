@@ -1793,7 +1793,7 @@ var BodyView = Backbone.View.extend({
 		var that = this;
 
 		//Toggles the shortcuts table
-		Mousetrap.bind(['/', '?'], function() { $('.shortcuts-field').toggleClass('active'); });
+		Mousetrap.bind(['/', '?'], function() { that.toggleList(); });
 
 		Mousetrap.bind(['n', 's', 'c', 'f'], function() { $('input.create-box').focus(); }, 'keyup');
 
@@ -1811,6 +1811,11 @@ var BodyView = Backbone.View.extend({
 		Mousetrap.bind('del', function() { that.deletePressed() });
 
 		//Mousetrap.bind(['command+z', 'ctrl+z'], function() { that.undo(); });
+	},
+
+	toggleList: function() {
+		$('.shortcuts-field').toggleClass('active');
+		$('.shortcuts-field .shortcuts').stop(true).slideToggle();
 	},
 
 	setupEvents: function() {

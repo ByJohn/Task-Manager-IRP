@@ -1762,6 +1762,7 @@ var BodyView = Backbone.View.extend({
 		var that = this;
 
 		this.taskList = $('.task-list');
+		this.tabList = $('.tab-list');
 
 		this.setupShortcuts();
 
@@ -1791,6 +1792,9 @@ var BodyView = Backbone.View.extend({
 
 		Mousetrap.bind('up', function() { that.navigateTasks(true) });
 		Mousetrap.bind('down', function() { that.navigateTasks(false) });
+
+		Mousetrap.bind('left', function() { that.navigateTabs(false) });
+		Mousetrap.bind('right', function() { that.navigateTabs(true) });
 	},
 
 	setupEvents: function() {
@@ -1846,6 +1850,31 @@ var BodyView = Backbone.View.extend({
 		}
 
 		//TODO: Scroll to selected task in long lists
+	},
+
+	navigateTabs: function(right) {
+		if(tabs.length > 1) {
+			var tabEls = this.tabList.find('.tab');
+
+			var activeTabIndex = null;
+			tabEls.each(function(i) {
+				if($(this).hasClass('active')) {
+					activeTabIndex = i;
+					return false;
+				}
+			});
+
+			if(activeTabIndex !== null) {
+				var newIndex = activeTabIndex;
+				if(right) newIndex++;
+				else newIndex--;
+
+				if(newIndex < 0) newIndex = tabEls.length - 1;
+				if(newIndex > tabEls.length - 1) newIndex = 0;
+
+				tabsView.setActiveTab(tabEls.eq(newIndex).attr('data-id'));
+			}
+		}
 	}
 
 });

@@ -1813,11 +1813,6 @@ var BodyView = Backbone.View.extend({
 		//Mousetrap.bind(['command+z', 'ctrl+z'], function() { that.undo(); });
 	},
 
-	toggleList: function() {
-		$('.shortcuts-field').toggleClass('active');
-		$('.shortcuts-field .shortcuts').stop(true).slideToggle();
-	},
-
 	setupEvents: function() {
 		var that = this;
 
@@ -1830,6 +1825,14 @@ var BodyView = Backbone.View.extend({
 			$(this).removeClass('selected');
 		});
 
+		$('.shortcuts-field h3, .shortcuts-field .info').click(function() {
+			that.toggleList();
+		});
+	},
+
+	toggleList: function() {
+		$('.shortcuts-field').toggleClass('active');
+		$('.shortcuts-field .shortcuts').stop(true).slideToggle();
 	},
 
 	getVisiableTasks: function() {

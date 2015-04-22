@@ -551,6 +551,10 @@ var TaskView = Backbone.View.extend({
 	template: _.template($('#task-template').html()),
 
 	events: {
+		'selectedSpacePressed' : 'toggleDone',
+		'selectedEnterPressed' : 'edit',
+		'selectedDeletePressed' : 'clear',
+
 		'click .toggle' : 'toggleDone',
 		'dblclick label.text' : 'edit',
 		'keydown input.text': 'textKeyDown',
@@ -1664,6 +1668,9 @@ var backup = {
 			tasks.invoke('save');
 
 			tabsView.setActiveTab(tabsView.activeTab);
+
+			this.data.tabs = null;
+			this.data.tasks = null;
 		}
 		else {
 			console.debug('Backup data is null: ', this.data);
@@ -1793,8 +1800,17 @@ var BodyView = Backbone.View.extend({
 		Mousetrap.bind('up', function() { that.navigateTasks(true) });
 		Mousetrap.bind('down', function() { that.navigateTasks(false) });
 
+		Mousetrap.bind('alt+up', function() { that.moveTask(true) });
+		Mousetrap.bind('alt+down', function() { that.moveTask(false) });
+
 		Mousetrap.bind('left', function() { that.navigateTabs(false) });
 		Mousetrap.bind('right', function() { that.navigateTabs(true) });
+
+		Mousetrap.bind('space', function() { that.spacePressed() });
+		Mousetrap.bind('enter', function(e) { e.preventDefault(); that.enterPressed() });
+		Mousetrap.bind('del', function() { that.deletePressed() });
+
+		//Mousetrap.bind(['command+z', 'ctrl+z'], function() { that.undo(); });
 	},
 
 	setupEvents: function() {
@@ -1852,6 +1868,31 @@ var BodyView = Backbone.View.extend({
 		//TODO: Scroll to selected task in long lists
 	},
 
+
+	moveTask: function(up) {
+		var tasks;
+		if($('body').hasClass('hide-unfiltered')) tasks = this.getVisiableTasks();
+		else tasks = this.taskList.find('li.task');
+
+		var selectedTaskIndex = null;
+		tasks.each(function(i) {
+			if($(this).hasClass('selected')) {
+				selectedTaskIndex = i;
+				return false;
+			}
+		});
+
+		if(selectedTaskIndex !== null) {
+			if(up && selectedTaskIndex > 0) {
+				tasks.eq(selectedTaskIndex).insertBefore(tasks.eq(selectedTaskIndex - 1)).trigger('drop');
+			}
+			else if(!up && selectedTaskIndex < tasks.length - 1) {
+				tasks.eq(selectedTaskIndex).insertAfter(tasks.eq(selectedTaskIndex + 1)).trigger('drop');
+			}
+		}
+	},
+
+
 	navigateTabs: function(right) {
 		if(tabs.length > 1) {
 			var tabEls = this.tabList.find('.tab');
@@ -1875,6 +1916,25 @@ var BodyView = Backbone.View.extend({
 				tabsView.setActiveTab(tabEls.eq(newIndex).attr('data-id'));
 			}
 		}
+	},
+
+
+	spacePressed: function() {
+		this.taskList.find('.task.selected').trigger('selectedSpacePressed');
+	},
+
+	enterPressed: function() {
+		this.taskList.find('.task.selected').trigger('selectedEnterPressed');
+	},
+
+	deletePressed: function() {
+		this.taskList.find('.task.selected').trigger('selectedDeletePressed');
+		this.navigateTasks(true);
+	},
+
+
+	undo: function() {
+		backup.load();
 	}
 
 });
